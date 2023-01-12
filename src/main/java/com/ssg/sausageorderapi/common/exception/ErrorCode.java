@@ -25,11 +25,13 @@ public enum ErrorCode {
      * 403 Forbidden
      */
     FORBIDDEN_EXCEPTION(ErrorStatusCode.FORBIDDEN, "허용하지 않는 요청입니다."),
+    FORBIDDEN_CART_SHARE_ACCESS_EXCEPTION(ErrorStatusCode.FORBIDDEN, "해당 장바구니에 접근 권한이 없습니다."),
 
     /**
      * 404 Not Found
      */
     NOT_FOUND_EXCEPTION(ErrorStatusCode.NOT_FOUND, "존재하지 않습니다."),
+    NOT_FOUND_CART_SHARE_EXCEPTION(ErrorStatusCode.NOT_FOUND, "존재하지 않는 공유장바구니입니다."),
 
     /**
      * 409 Conflict

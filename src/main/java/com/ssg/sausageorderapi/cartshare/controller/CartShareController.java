@@ -1,6 +1,7 @@
 package com.ssg.sausageorderapi.cartshare.controller;
 
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindListResponse;
+import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausageorderapi.cartshare.service.CartShareService;
 import com.ssg.sausageorderapi.common.config.resolver.MbrId;
 import com.ssg.sausageorderapi.common.dto.ErrorResponse;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,5 +38,19 @@ public class CartShareController {
             @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId) {
         return SuccessResponse.success(SuccessCode.FIND_CART_SHARE_LIST_SUCCESS,
                 cartShareService.findCartShareList(mbrId));
+    }
+
+    @Operation(summary = "단일 장바구니 조회", responses = {
+            @ApiResponse(responseCode = "200", description = "단일 장바구니 조회 성공입니다."),
+            @ApiResponse(responseCode = "403", description = "해당 장바구니에 접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 공유장바구니입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @GetMapping("/cart-share/{cartShareId}")
+    public ResponseEntity<SuccessResponse<CartShareFindResponse>> findCartShare(
+            @PathVariable Long cartShareId,
+            @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId) {
+        return SuccessResponse.success(SuccessCode.FIND_CART_SHARE_SUCCESS,
+                cartShareService.findCartShare(cartShareId, mbrId));
     }
 }
