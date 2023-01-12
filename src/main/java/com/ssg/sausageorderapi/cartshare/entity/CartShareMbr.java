@@ -1,11 +1,15 @@
-package com.ssg.sausageorderapi.example.entity;
+package com.ssg.sausageorderapi.cartshare.entity;
 
 import com.ssg.sausageorderapi.common.entity.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,22 +18,33 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
-@Table(name = "example")
+@Table(name = "CART_SHARE_MBR")
 @Getter
 @Entity
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder(access = AccessLevel.PROTECTED)
-public class Example extends BaseEntity {
+@Builder
+public class CartShareMbr extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
+    @Column(name = "CARD_SHARE_MBR_ID")
+    private Long cartShareMbrId;
 
-    public static Example newInstance() {
-        return Example.builder()
+    @Column(name = "MBR_ID")
+    private Long mbrId;
+
+    @ManyToOne
+    @JoinColumn(name = "CART_SHARE_ID")
+    private CartShare cartShare;
+
+    @Column(name = "PROG_STAT_CD")
+    @Enumerated(EnumType.STRING)
+    private ProgStatCd progStatCd;
+
+    public static CartShareMbr newInstance() {
+        return CartShareMbr.builder()
                 .build();
     }
 }
