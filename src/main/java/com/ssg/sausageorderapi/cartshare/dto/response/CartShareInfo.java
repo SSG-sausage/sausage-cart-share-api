@@ -1,6 +1,7 @@
 package com.ssg.sausageorderapi.cartshare.dto.response;
 
 import com.ssg.sausageorderapi.cartshare.entity.CartShare;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +16,13 @@ import lombok.ToString;
 @Builder(access = AccessLevel.PRIVATE)
 public class CartShareInfo {
 
+    @Schema(description = "공유장바구니 id")
     private Long cartShareId;
+
+    @Schema(description = "마스터 멤버 id")
     private Long mastrMbrId;
+
+    @Schema(description = "공유장바구니 이름")
     private String cartShareNm;
 
     public static CartShareInfo of(CartShare cartShare) {
