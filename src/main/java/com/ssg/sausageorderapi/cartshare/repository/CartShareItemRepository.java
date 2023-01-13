@@ -5,7 +5,7 @@ import com.ssg.sausageorderapi.cartshare.entity.CartShareItem;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CartShareItemRepository extends JpaRepository<CartShareItem, Long>, CartShareItemRepositoryCustom {
+public interface CartShareItemRepository extends JpaRepository<CartShareItem, Long> {
 
     List<CartShareItem> findAllByCartShare(CartShare cartShare);
 }
