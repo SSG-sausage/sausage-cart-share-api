@@ -1,5 +1,7 @@
 package com.ssg.sausageorderapi.cartshare.service;
 
+import com.ssg.sausageorderapi.cartshare.dto.CartShareUpdateDto;
+import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemSaveRequest;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausageorderapi.cartshare.entity.CartShare;
@@ -13,6 +15,7 @@ import com.ssg.sausageorderapi.common.exception.ForbiddenException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,7 @@ public class CartShareService {
     private final CartShareMbrRepository cartShareMbrRepository;
     private final CartShareItemRepository cartShareItemRepository;
     private final CartShareUtilService cartShareUtilService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     public CartShareFindListResponse findCartShareList(Long mbrId) {
         List<CartShare> cartShareList = cartShareRepository.findCartShareListByMbrId(mbrId);
@@ -37,6 +41,22 @@ public class CartShareService {
         List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare);
         List<CartShareItem> cartShareItemList = cartShareItemRepository.findAllByCartShare(cartShare);
         return CartShareFindResponse.of(cartShare, cartShareMbrList, cartShareItemList);
+    }
+
+    @Transactional
+    public void saveCartShareItem(Long cartShareId, Long mbrId, CartShareItemSaveRequest request) {
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        validateCartShareMbr(cartShare, mbrId);
+        Optional<CartShareItem> cartShareItem = cartShareItemRepository.findByCartShareAndMbrIdAndItemId(
+                cartShare, mbrId, request.getItemId());
+        if (cartShareItem.isPresent()) {
+            cartShareItem.get().addItemQty(request.getItemQty());
+        } else {
+            cartShareItemRepository.save(
+                    CartShareItem.newInstance(mbrId, request.getItemId(), cartShare, request.getItemQty()));
+        }
+        simpMessagingTemplate.convertAndSend(
+                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
     }
 
     private void validateCartShareMbr(CartShare cartShare, Long mbrId) {

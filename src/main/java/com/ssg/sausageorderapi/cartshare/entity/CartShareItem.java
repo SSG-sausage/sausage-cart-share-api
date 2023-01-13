@@ -46,8 +46,17 @@ public class CartShareItem extends BaseEntity {
     @Column(name = "ITEM_QTY")
     private Integer itemQty;
 
-    public static CartShareItem newInstance() {
+    public static CartShareItem newInstance(Long mbrId, Long itemId, CartShare cartShare, int itemQty) {
         return CartShareItem.builder()
+                .mbrId(mbrId)
+                .itemId(itemId)
+                .cartShare(cartShare)
+                .commYn(false)
+                .itemQty(itemQty)
                 .build();
+    }
+
+    public void addItemQty(int itemQty) {
+        this.itemQty += itemQty;
     }
 }

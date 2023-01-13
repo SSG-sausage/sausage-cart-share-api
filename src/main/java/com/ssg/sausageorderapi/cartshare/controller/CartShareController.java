@@ -1,5 +1,6 @@
 package com.ssg.sausageorderapi.cartshare.controller;
 
+import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemSaveRequest;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausageorderapi.cartshare.service.CartShareService;
@@ -14,10 +15,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,5 +56,21 @@ public class CartShareController {
             @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId) {
         return SuccessResponse.success(SuccessCode.FIND_CART_SHARE_SUCCESS,
                 cartShareService.findCartShare(cartShareId, mbrId));
+    }
+
+    @Operation(summary = "장바구니에 상품 추가", responses = {
+            @ApiResponse(responseCode = "200", description = "성공입니다."),
+            @ApiResponse(responseCode = "400", description = "1. itemId를 입력해주세요. (itemId)\n2. itemQty를 입력해주세요. (itemQty)", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "해당 장바구니에 접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 공유장바구니입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @PostMapping("/cart-share/{cartShareId}/cart-share-item")
+    public ResponseEntity<SuccessResponse<String>> saveCartShareItem(
+            @PathVariable Long cartShareId,
+            @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId,
+            @Valid @RequestBody CartShareItemSaveRequest request) {
+        cartShareService.saveCartShareItem(cartShareId, mbrId, request);
+        return SuccessResponse.OK;
     }
 }
