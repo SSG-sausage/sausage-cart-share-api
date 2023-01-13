@@ -20,16 +20,15 @@ public class CartShareUtilService {
 
     public CartShare findCartShareById(Long cartShareId) {
         Optional<CartShare> cartShare = cartShareRepository.findById(cartShareId);
-        if (cartShare.isEmpty()) {
-            throw new NotFoundException(String.format("존재하지 않는 CART_SHARE (%s) 입니다.", cartShareId),
-                    ErrorCode.NOT_FOUND_CART_SHARE_EXCEPTION);
-        }
-        return cartShare.get();
+        return cartShare.orElseThrow(
+                () -> new NotFoundException(String.format("존재하지 않는 CART_SHARE (%s) 입니다.", cartShareId),
+                        ErrorCode.NOT_FOUND_CART_SHARE_EXCEPTION));
     }
 
     public void validateCartShareMbr(CartShare cartShare, Long mbrId) {
-        CartShareMbr cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(cartShare, mbrId);
-        if (cartShareMbr == null) {
+        Optional<CartShareMbr> cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(
+                cartShare, mbrId);
+        if (cartShareMbr.isEmpty()) {
             throw new ForbiddenException(
                     String.format("멤버 (%s) 는 공유장바구니 (%s) 에 접근할 수 없습니다.", mbrId, cartShare.getCartShareId()),
                     ErrorCode.FORBIDDEN_CART_SHARE_ACCESS_EXCEPTION);
