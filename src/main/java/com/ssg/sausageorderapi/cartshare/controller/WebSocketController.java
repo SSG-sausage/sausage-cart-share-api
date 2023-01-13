@@ -1,6 +1,6 @@
-package com.ssg.sausageorderapi.websocket.controller;
+package com.ssg.sausageorderapi.cartshare.controller;
 
-import com.ssg.sausageorderapi.websocket.dto.CartShareUpdateDto;
+import com.ssg.sausageorderapi.cartshare.dto.CartShareUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;

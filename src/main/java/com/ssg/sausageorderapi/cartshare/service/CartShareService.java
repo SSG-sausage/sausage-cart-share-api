@@ -21,6 +21,7 @@ public class CartShareService {
     private final CartShareRepository cartShareRepository;
     private final CartShareMbrRepository cartShareMbrRepository;
     private final CartShareItemRepository cartShareItemRepository;
+    private final CartShareUtilService cartShareUtilService;
 
     public CartShareFindListResponse findCartShareList(Long mbrId) {
         List<CartShare> cartShareList = cartShareRepository.findCartShareListByMbrId(mbrId);
@@ -28,8 +29,8 @@ public class CartShareService {
     }
 
     public CartShareFindResponse findCartShare(Long cartShareId, Long mbrId) {
-        CartShare cartShare = CartShareServiceUtils.findCartShareById(cartShareRepository, cartShareId);
-        CartShareServiceUtils.validateCartShareMbr(cartShareMbrRepository, cartShare, mbrId);
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        cartShareUtilService.validateCartShareMbr(cartShare, mbrId);
         List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare);
         List<CartShareItem> cartShareItemList = cartShareItemRepository.findAllByCartShare(cartShare);
         return CartShareFindResponse.of(cartShare, cartShareMbrList, cartShareItemList);

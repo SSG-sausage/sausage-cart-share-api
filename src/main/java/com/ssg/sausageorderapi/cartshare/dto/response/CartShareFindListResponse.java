@@ -1,6 +1,7 @@
 package com.ssg.sausageorderapi.cartshare.dto.response;
 
 import com.ssg.sausageorderapi.cartshare.entity.CartShare;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -17,6 +18,7 @@ import lombok.ToString;
 @Builder(access = AccessLevel.PRIVATE)
 public class CartShareFindListResponse {
 
+    @Schema(description = "공유장바구니 리스트")
     private List<CartShareInfo> cartShareList;
 
     public static CartShareFindListResponse of(List<CartShare> cartShareList) {

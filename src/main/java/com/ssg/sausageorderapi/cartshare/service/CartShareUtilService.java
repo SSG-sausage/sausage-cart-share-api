@@ -8,13 +8,17 @@ import com.ssg.sausageorderapi.common.exception.ErrorCode;
 import com.ssg.sausageorderapi.common.exception.ForbiddenException;
 import com.ssg.sausageorderapi.common.exception.NotFoundException;
 import java.util.Optional;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CartShareServiceUtils {
+@Service
+@RequiredArgsConstructor
+public class CartShareUtilService {
 
-    public static CartShare findCartShareById(CartShareRepository cartShareRepository, Long cartShareId) {
+    private final CartShareRepository cartShareRepository;
+    private final CartShareMbrRepository cartShareMbrRepository;
+
+    public CartShare findCartShareById(Long cartShareId) {
         Optional<CartShare> cartShare = cartShareRepository.findById(cartShareId);
         if (cartShare.isEmpty()) {
             throw new NotFoundException(String.format("존재하지 않는 CART_SHARE (%s) 입니다.", cartShareId),
@@ -23,8 +27,7 @@ public class CartShareServiceUtils {
         return cartShare.get();
     }
 
-    public static void validateCartShareMbr(CartShareMbrRepository cartShareMbrRepository, CartShare cartShare,
-            Long mbrId) {
+    public void validateCartShareMbr(CartShare cartShare, Long mbrId) {
         CartShareMbr cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(cartShare, mbrId);
         if (cartShareMbr == null) {
             throw new ForbiddenException(

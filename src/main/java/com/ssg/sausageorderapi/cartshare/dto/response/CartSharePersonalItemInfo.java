@@ -1,6 +1,7 @@
 package com.ssg.sausageorderapi.cartshare.dto.response;
 
 import com.ssg.sausageorderapi.cartshare.entity.CartShareItem;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -17,7 +18,10 @@ import lombok.ToString;
 @Builder(access = AccessLevel.PRIVATE)
 public class CartSharePersonalItemInfo {
 
+    @Schema(description = "멤버 id")
     private Long mbrId;
+
+    @Schema(description = "공유장바구니 상품 리스트")
     private List<CartShareItemInfo> cartShareItemList;
 
     public static CartSharePersonalItemInfo of(Long mbrId, List<CartShareItem> cartShareItemList) {

@@ -1,4 +1,4 @@
-package com.ssg.sausageorderapi.websocket.dto;
+package com.ssg.sausageorderapi.cartshare.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;
