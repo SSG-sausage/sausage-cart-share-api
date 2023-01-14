@@ -15,6 +15,7 @@ public enum ErrorCode {
     VALIDATION_ENUM_VALUE_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "잘못된 Enum 값 입니다."),
     VALIDATION_REQUEST_MISSING_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "필수적인 요청 값이 입력되지 않았습니다."),
     VALIDATION_WRONG_TYPE_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "잘못된 타입이 입력되었습니다."),
+    VALIDATION_CART_SHARE_ITEM_QTY_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "공유장바구니상품 수량은 1보다 작을 수 없습니다."),
 
     /**
      * 401 UnAuthorized

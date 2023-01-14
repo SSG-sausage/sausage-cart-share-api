@@ -1,6 +1,7 @@
 package com.ssg.sausageorderapi.cartshare.service;
 
 import com.ssg.sausageorderapi.cartshare.dto.CartShareUpdateDto;
+import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemQtyUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemSaveRequest;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindResponse;
@@ -12,6 +13,7 @@ import com.ssg.sausageorderapi.cartshare.repository.CartShareMbrRepository;
 import com.ssg.sausageorderapi.cartshare.repository.CartShareRepository;
 import com.ssg.sausageorderapi.common.exception.ErrorCode;
 import com.ssg.sausageorderapi.common.exception.ForbiddenException;
+import com.ssg.sausageorderapi.common.exception.ValidationException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +72,19 @@ public class CartShareService {
                 "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
     }
 
+    @Transactional
+    public void updateCartShareItemQty(Long cartShareId, Long cartShareItemId, Long mbrId,
+            CartShareItemQtyUpdateRequest request) {
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        CartShareItem cartShareItem = cartShareUtilService.findCartShareItemById(cartShareItemId);
+        validateCartShareMbr(cartShare, mbrId);
+        validateCartShareItem(cartShareItem, cartShare, mbrId);
+        validateCartShareItemQty(cartShareItem, request.getQty());
+        cartShareItem.addItemQty(request.getQty());
+        simpMessagingTemplate.convertAndSend(
+                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+    }
+
     private void validateCartShareMbr(CartShare cartShare, Long mbrId) {
         Optional<CartShareMbr> cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(
                 cartShare, mbrId);
@@ -85,6 +100,14 @@ public class CartShareService {
             throw new ForbiddenException(
                     String.format("멤버 (%s) 는 공유장바구니상품 (%s) 에 접근할 수 없습니다.", mbrId, cartShareItem.getCartShareItemId()),
                     ErrorCode.FORBIDDEN_CART_SHARE_ITEM_ACCESS_EXCEPTION);
+        }
+    }
+
+    private void validateCartShareItemQty(CartShareItem cartShareItem, int qty) {
+        if (cartShareItem.getItemQty() + qty < 1) {
+            throw new ValidationException(
+                    String.format("공유장바구니상품의 수량 (%s) 에 수량 (%s) 를 더할 수 없습니다.", cartShareItem.getItemQty(), qty),
+                    ErrorCode.VALIDATION_CART_SHARE_ITEM_QTY_EXCEPTION);
         }
     }
 }

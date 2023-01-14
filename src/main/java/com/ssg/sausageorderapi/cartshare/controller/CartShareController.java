@@ -1,5 +1,6 @@
 package com.ssg.sausageorderapi.cartshare.controller;
 
+import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemQtyUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemSaveRequest;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindResponse;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -87,6 +89,23 @@ public class CartShareController {
             @PathVariable Long cartShareItemId,
             @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId) {
         cartShareService.deleteCartShareItem(cartShareId, cartShareItemId, mbrId);
+        return SuccessResponse.OK;
+    }
+
+    @Operation(summary = "장바구니의 상품 수량 변경", responses = {
+            @ApiResponse(responseCode = "200", description = "성공입니다."),
+            @ApiResponse(responseCode = "400", description = "1. qty를 입력해주세요. (qty)\n2. 공유장바구니상품 수량은 1보다 작을 수 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "1. 해당 장바구니에 접근 권한이 없습니다.\n2. 해당 장바구니상품에 접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "1. 존재하지 않는 공유장바구니입니다.\n2. 존재하지 않는 공유장바구니상품입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @PatchMapping("/cart-share/{cartShareId}/cart-share-item/{cartShareItemId}/qty")
+    public ResponseEntity<SuccessResponse<String>> updateCartShareItemQty(
+            @PathVariable Long cartShareId,
+            @PathVariable Long cartShareItemId,
+            @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId,
+            @Valid @RequestBody CartShareItemQtyUpdateRequest request) {
+        cartShareService.updateCartShareItemQty(cartShareId, cartShareItemId, mbrId, request);
         return SuccessResponse.OK;
     }
 }
