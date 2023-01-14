@@ -59,6 +59,17 @@ public class CartShareService {
                 "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
     }
 
+    @Transactional
+    public void deleteCartShareItem(Long cartShareId, Long cartShareItemId, Long mbrId) {
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        CartShareItem cartShareItem = cartShareUtilService.findCartShareItemById(cartShareItemId);
+        validateCartShareMbr(cartShare, mbrId);
+        validateCartShareItem(cartShareItem, cartShare, mbrId);
+        cartShareItemRepository.delete(cartShareItem);
+        simpMessagingTemplate.convertAndSend(
+                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+    }
+
     private void validateCartShareMbr(CartShare cartShare, Long mbrId) {
         Optional<CartShareMbr> cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(
                 cartShare, mbrId);
@@ -66,6 +77,14 @@ public class CartShareService {
             throw new ForbiddenException(
                     String.format("멤버 (%s) 는 공유장바구니 (%s) 에 접근할 수 없습니다.", mbrId, cartShare.getCartShareId()),
                     ErrorCode.FORBIDDEN_CART_SHARE_ACCESS_EXCEPTION);
+        }
+    }
+
+    private void validateCartShareItem(CartShareItem cartShareItem, CartShare cartShare, Long mbrId) {
+        if (!cartShareItem.getCartShare().equals(cartShare) || !cartShareItem.getMbrId().equals(mbrId)) {
+            throw new ForbiddenException(
+                    String.format("멤버 (%s) 는 공유장바구니상품 (%s) 에 접근할 수 없습니다.", mbrId, cartShareItem.getCartShareItemId()),
+                    ErrorCode.FORBIDDEN_CART_SHARE_ITEM_ACCESS_EXCEPTION);
         }
     }
 }

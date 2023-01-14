@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,6 +72,21 @@ public class CartShareController {
             @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId,
             @Valid @RequestBody CartShareItemSaveRequest request) {
         cartShareService.saveCartShareItem(cartShareId, mbrId, request);
+        return SuccessResponse.OK;
+    }
+
+    @Operation(summary = "장바구니의 상품 삭제", responses = {
+            @ApiResponse(responseCode = "200", description = "성공입니다."),
+            @ApiResponse(responseCode = "403", description = "1. 해당 장바구니에 접근 권한이 없습니다.\n2. 해당 장바구니상품에 접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "1. 존재하지 않는 공유장바구니입니다.\n2. 존재하지 않는 공유장바구니상품입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @DeleteMapping("/cart-share/{cartShareId}/cart-share-item/{cartShareItemId}")
+    public ResponseEntity<SuccessResponse<String>> saveCartShareItem(
+            @PathVariable Long cartShareId,
+            @PathVariable Long cartShareItemId,
+            @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId) {
+        cartShareService.deleteCartShareItem(cartShareId, cartShareItemId, mbrId);
         return SuccessResponse.OK;
     }
 }
