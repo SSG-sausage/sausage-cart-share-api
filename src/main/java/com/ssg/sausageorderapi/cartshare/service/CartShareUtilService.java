@@ -1,7 +1,6 @@
 package com.ssg.sausageorderapi.cartshare.service;
 
 import com.ssg.sausageorderapi.cartshare.entity.CartShare;
-import com.ssg.sausageorderapi.cartshare.repository.CartShareMbrRepository;
 import com.ssg.sausageorderapi.cartshare.repository.CartShareRepository;
 import com.ssg.sausageorderapi.common.exception.ErrorCode;
 import com.ssg.sausageorderapi.common.exception.NotFoundException;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class CartShareUtilService {
 
     private final CartShareRepository cartShareRepository;
-    private final CartShareMbrRepository cartShareMbrRepository;
 
     public CartShare findCartShareById(Long cartShareId) {
         Optional<CartShare> cartShare = cartShareRepository.findById(cartShareId);
