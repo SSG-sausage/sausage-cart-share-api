@@ -66,7 +66,7 @@ public class CartShareController {
 
     @Operation(summary = "장바구니에 상품 추가", responses = {
             @ApiResponse(responseCode = "200", description = "성공입니다."),
-            @ApiResponse(responseCode = "400", description = "1. itemId를 입력해주세요. (itemId)\n2. itemQty를 입력해주세요. (itemQty)\n3. 공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "1. itemId를 입력해주세요. (itemId)\n2. itemQty를 입력해주세요. (itemQty)\n3. 공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다.\n4. 공유장바구니의 수정 가능 여부가 false 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "해당 장바구니에 접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 공유장바구니입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -82,7 +82,7 @@ public class CartShareController {
 
     @Operation(summary = "장바구니의 상품 삭제", responses = {
             @ApiResponse(responseCode = "200", description = "성공입니다."),
-            @ApiResponse(responseCode = "400", description = "공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "1. 공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다.\n2. 공유장바구니의 수정 가능 여부가 false 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "1. 해당 장바구니에 접근 권한이 없습니다.\n2. 해당 장바구니상품에 접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "1. 존재하지 않는 공유장바구니입니다.\n2. 존재하지 않는 공유장바구니상품입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -98,7 +98,7 @@ public class CartShareController {
 
     @Operation(summary = "장바구니의 상품 수량 변경", responses = {
             @ApiResponse(responseCode = "200", description = "성공입니다."),
-            @ApiResponse(responseCode = "400", description = "1. qty를 입력해주세요. (qty)\n2. 공유장바구니상품 수량은 1보다 작을 수 없습니다.\n3. 공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "1. qty를 입력해주세요. (qty)\n2. 공유장바구니상품 수량은 1보다 작을 수 없습니다.\n3. 공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다.\n4. 공유장바구니의 수정 가능 여부가 false 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "1. 해당 장바구니에 접근 권한이 없습니다.\n2. 해당 장바구니상품에 접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "1. 존재하지 않는 공유장바구니입니다.\n2. 존재하지 않는 공유장바구니상품입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -115,7 +115,7 @@ public class CartShareController {
 
     @Operation(summary = "장바구니의 상품 공통 여부 변경", responses = {
             @ApiResponse(responseCode = "200", description = "성공입니다."),
-            @ApiResponse(responseCode = "400", description = "1. commYn를 입력해주세요. (commYn)\n2. 공유장바구니상품 공통 여부가 이미 요청한 상태입니다.\n3. 공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "1. commYn를 입력해주세요. (commYn)\n2. 공유장바구니상품 공통 여부가 이미 요청한 상태입니다.\n3. 공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다.\n4. 공유장바구니의 수정 가능 여부가 false 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "1. 해당 장바구니에 접근 권한이 없습니다.\n2. 해당 장바구니상품에 접근 권한이 없습니다.\n3. 해당 장바구니의 마스터에게만 접근 권한이 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "1. 존재하지 않는 공유장바구니입니다.\n2. 존재하지 않는 공유장바구니상품입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -132,7 +132,7 @@ public class CartShareController {
 
     @Operation(summary = "장바구니의 멤버 진행 상태 변경", responses = {
             @ApiResponse(responseCode = "200", description = "성공입니다."),
-            @ApiResponse(responseCode = "400", description = "1. progStatCd를 입력해주세요. (progStatCd)\n2. 공유장바구니멤버 진행 상태가 이미 요청한 상태입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "1. progStatCd를 입력해주세요. (progStatCd)\n2. 공유장바구니멤버 진행 상태가 이미 요청한 상태입니다.\n3. 공유장바구니의 수정 가능 여부가 false 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "해당 장바구니에 접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "1. 존재하지 않는 공유장바구니입니다.\n2. 존재하지 않는 공유장바구니멤버입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),

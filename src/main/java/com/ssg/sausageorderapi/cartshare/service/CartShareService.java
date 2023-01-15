@@ -53,6 +53,7 @@ public class CartShareService {
     public void saveCartShareItem(Long cartShareId, Long mbrId, CartShareItemSaveRequest request) {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
         CartShareMbr cartShareMbr = findCartShareMbrByCartShareAndMbrId(cartShare, mbrId);
+        validateCartShareEdit(cartShare);
         validateCartShareMbrProg(cartShareMbr);
         Optional<CartShareItem> cartShareItem = cartShareItemRepository.findByCartShareAndMbrIdAndItemId(
                 cartShare, mbrId, request.getItemId());
@@ -71,6 +72,7 @@ public class CartShareService {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
         CartShareItem cartShareItem = cartShareUtilService.findCartShareItemById(cartShareItemId);
         CartShareMbr cartShareMbr = findCartShareMbrByCartShareAndMbrId(cartShare, mbrId);
+        validateCartShareEdit(cartShare);
         validateCartShareMbrProg(cartShareMbr);
         validateCartShareItem(cartShareItem, cartShare, mbrId);
         cartShareItemRepository.delete(cartShareItem);
@@ -84,6 +86,7 @@ public class CartShareService {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
         CartShareItem cartShareItem = cartShareUtilService.findCartShareItemById(cartShareItemId);
         CartShareMbr cartShareMbr = findCartShareMbrByCartShareAndMbrId(cartShare, mbrId);
+        validateCartShareEdit(cartShare);
         validateCartShareMbrProg(cartShareMbr);
         validateCartShareItem(cartShareItem, cartShare, mbrId);
         validateCartShareItemQty(cartShareItem, request.getQty());
@@ -98,6 +101,7 @@ public class CartShareService {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
         CartShareItem cartShareItem = cartShareUtilService.findCartShareItemById(cartShareItemId);
         CartShareMbr cartShareMbr = findCartShareMbrByCartShareAndMbrId(cartShare, mbrId);
+        validateCartShareEdit(cartShare);
         validateCartShareMbrProg(cartShareMbr);
         validateCartShareMastr(cartShare, mbrId);
         validateCartShareItem(cartShareItem, cartShare, mbrId);
@@ -112,6 +116,7 @@ public class CartShareService {
             CartShareMbrProgUpdateRequest request) {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
         CartShareMbr cartShareMbr = cartShareUtilService.findCartShareMbrById(cartShareMbrId);
+        validateCartShareEdit(cartShare);
         validateCartShareMbr(cartShare, mbrId);
         validateCartShareMbrProg(cartShareMbr, request.getProgStatCd());
         cartShareMbr.updateProgStatCd(request.getProgStatCd());
@@ -203,6 +208,14 @@ public class CartShareService {
             throw new ValidationException(
                     String.format("공유장바구니의 수정가능여부 (%s) 와 요청한 상태 (%s) 가 같습니다.", cartShare.getEditPsblYn(), editPsblYn),
                     ErrorCode.VALIDATION_CART_SHARE_EDIT_EXCEPTION);
+        }
+    }
+
+    private void validateCartShareEdit(CartShare cartShare) {
+        if (cartShare.getEditPsblYn().equals(false)) {
+            throw new ValidationException(
+                    String.format("공유장바구니의 수정가능여부가 (%s) 라서 수정할 수 없습니다.", cartShare.getEditPsblYn()),
+                    ErrorCode.VALIDATION_CART_SHARE_EDIT_PSBL_TRUE_EXCEPTION);
         }
     }
 }

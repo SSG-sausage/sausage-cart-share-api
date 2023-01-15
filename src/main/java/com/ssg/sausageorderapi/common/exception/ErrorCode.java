@@ -20,6 +20,8 @@ public enum ErrorCode {
     VALIDATION_CART_SHARE_MBR_PROG_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "공유장바구니멤버 진행 상태가 이미 요청한 상태입니다."),
     VALIDATION_CART_SHARE_MBR_PROG_DONE_EXCEPTION(ErrorStatusCode.BAD_REQUEST,
             "공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다."),
+    VALIDATION_CART_SHARE_EDIT_PSBL_TRUE_EXCEPTION(ErrorStatusCode.BAD_REQUEST,
+            "공유장바구니의 수정 가능 여부가 false 인 경우에만 수정 할 수 있습니다."),
     VALIDATION_CART_SHARE_EDIT_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "공유장바구니 수정 가능 여부가 이미 요청한 상태입니다."),
 
     /**
