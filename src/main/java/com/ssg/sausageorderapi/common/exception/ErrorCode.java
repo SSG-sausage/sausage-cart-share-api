@@ -16,6 +16,7 @@ public enum ErrorCode {
     VALIDATION_REQUEST_MISSING_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "필수적인 요청 값이 입력되지 않았습니다."),
     VALIDATION_WRONG_TYPE_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "잘못된 타입이 입력되었습니다."),
     VALIDATION_CART_SHARE_ITEM_QTY_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "공유장바구니상품 수량은 1보다 작을 수 없습니다."),
+    VALIDATION_CART_SHARE_ITEM_COMM_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "공유장바구니상품 공통 여부가 이미 요청한 상태입니다."),
 
     /**
      * 401 UnAuthorized
@@ -28,6 +29,7 @@ public enum ErrorCode {
     FORBIDDEN_EXCEPTION(ErrorStatusCode.FORBIDDEN, "허용하지 않는 요청입니다."),
     FORBIDDEN_CART_SHARE_ACCESS_EXCEPTION(ErrorStatusCode.FORBIDDEN, "해당 장바구니에 접근 권한이 없습니다."),
     FORBIDDEN_CART_SHARE_ITEM_ACCESS_EXCEPTION(ErrorStatusCode.FORBIDDEN, "해당 장바구니상품에 접근 권한이 없습니다."),
+    FORBIDDEN_CART_SHARE_MASTR_ACCESS_EXCEPTION(ErrorStatusCode.FORBIDDEN, "해당 장바구니의 마스터에게만 접근 권한이 있습니다."),
 
     /**
      * 404 Not Found

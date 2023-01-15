@@ -1,5 +1,6 @@
 package com.ssg.sausageorderapi.cartshare.controller;
 
+import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemCommUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemQtyUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemSaveRequest;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindListResponse;
@@ -106,6 +107,23 @@ public class CartShareController {
             @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId,
             @Valid @RequestBody CartShareItemQtyUpdateRequest request) {
         cartShareService.updateCartShareItemQty(cartShareId, cartShareItemId, mbrId, request);
+        return SuccessResponse.OK;
+    }
+
+    @Operation(summary = "장바구니의 상품 공통 여부 변경", responses = {
+            @ApiResponse(responseCode = "200", description = "성공입니다."),
+            @ApiResponse(responseCode = "400", description = "1. commYn를 입력해주세요. (commYn)\n2. 공유장바구니상품 공통 여부가 이미 요청한 상태입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "1. 해당 장바구니에 접근 권한이 없습니다.\n2. 해당 장바구니상품에 접근 권한이 없습니다.\n3. 해당 장바구니의 마스터에게만 접근 권한이 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "1. 존재하지 않는 공유장바구니입니다.\n2. 존재하지 않는 공유장바구니상품입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @PatchMapping("/cart-share/{cartShareId}/cart-share-item/{cartShareItemId}/comm")
+    public ResponseEntity<SuccessResponse<String>> updateCartShareItemComm(
+            @PathVariable Long cartShareId,
+            @PathVariable Long cartShareItemId,
+            @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId,
+            @Valid @RequestBody CartShareItemCommUpdateRequest request) {
+        cartShareService.updateCartShareItemComm(cartShareId, cartShareItemId, mbrId, request);
         return SuccessResponse.OK;
     }
 }

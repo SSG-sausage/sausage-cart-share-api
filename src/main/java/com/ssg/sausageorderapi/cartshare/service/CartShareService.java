@@ -1,6 +1,7 @@
 package com.ssg.sausageorderapi.cartshare.service;
 
 import com.ssg.sausageorderapi.cartshare.dto.CartShareUpdateDto;
+import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemCommUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemQtyUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemSaveRequest;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindListResponse;
@@ -85,6 +86,20 @@ public class CartShareService {
                 "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
     }
 
+    @Transactional
+    public void updateCartShareItemComm(Long cartShareId, Long cartShareItemId, Long mbrId,
+            CartShareItemCommUpdateRequest request) {
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        CartShareItem cartShareItem = cartShareUtilService.findCartShareItemById(cartShareItemId);
+        validateCartShareMbr(cartShare, mbrId);
+        validateCartShareMastr(cartShare, mbrId);
+        validateCartShareItem(cartShareItem, cartShare, mbrId);
+        validateCartShareItemComm(cartShareItem, request.isCommYn());
+        cartShareItem.updateCommYn(request.isCommYn());
+        simpMessagingTemplate.convertAndSend(
+                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+    }
+
     private void validateCartShareMbr(CartShare cartShare, Long mbrId) {
         Optional<CartShareMbr> cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(
                 cartShare, mbrId);
@@ -108,6 +123,22 @@ public class CartShareService {
             throw new ValidationException(
                     String.format("공유장바구니상품의 수량 (%s) 에 수량 (%s) 를 더할 수 없습니다.", cartShareItem.getItemQty(), qty),
                     ErrorCode.VALIDATION_CART_SHARE_ITEM_QTY_EXCEPTION);
+        }
+    }
+
+    private void validateCartShareItemComm(CartShareItem cartShareItem, boolean commYn) {
+        if (cartShareItem.getCommYn().equals(commYn)) {
+            throw new ValidationException(
+                    String.format("공유장바구니상품의 상태 (%s) 와 요청한 상태 (%s) 가 같습니다.", cartShareItem.getCommYn(), commYn),
+                    ErrorCode.VALIDATION_CART_SHARE_ITEM_COMM_EXCEPTION);
+        }
+    }
+
+    private void validateCartShareMastr(CartShare cartShare, Long mbrId) {
+        if (!cartShare.getMastrMbrId().equals(mbrId)) {
+            throw new ForbiddenException(
+                    String.format("공유장바구니의 마스터 (%s) 가 아닌 멤버 (%s) 는 접근 권한이 없습니다.", cartShare.getMastrMbrId(), mbrId),
+                    ErrorCode.FORBIDDEN_CART_SHARE_MASTR_ACCESS_EXCEPTION);
         }
     }
 }
