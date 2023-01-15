@@ -1,6 +1,7 @@
 package com.ssg.sausageorderapi.cartshare.service;
 
 import com.ssg.sausageorderapi.cartshare.dto.CartShareUpdateDto;
+import com.ssg.sausageorderapi.cartshare.dto.request.CartShareEditUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemCommUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemQtyUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemSaveRequest;
@@ -118,6 +119,17 @@ public class CartShareService {
                 "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
     }
 
+    @Transactional
+    public void updateCartShareEdit(Long cartShareId, Long mbrId, CartShareEditUpdateRequest request) {
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        validateCartShareMbr(cartShare, mbrId);
+        validateCartShareMastr(cartShare, mbrId);
+        validateCartShareEdit(cartShare, request.isEditPsblYn());
+        cartShare.updateEditPsblYn(request.isEditPsblYn());
+        simpMessagingTemplate.convertAndSend(
+                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+    }
+
     private void validateCartShareMbr(CartShare cartShare, Long mbrId) {
         Optional<CartShareMbr> cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(
                 cartShare, mbrId);
@@ -184,5 +196,13 @@ public class CartShareService {
                 () -> new ForbiddenException(
                         String.format("멤버 (%s) 는 공유장바구니 (%s) 에 접근할 수 없습니다.", mbrId, cartShare.getCartShareId()),
                         ErrorCode.FORBIDDEN_CART_SHARE_ACCESS_EXCEPTION));
+    }
+
+    private void validateCartShareEdit(CartShare cartShare, boolean editPsblYn) {
+        if (cartShare.getEditPsblYn().equals(editPsblYn)) {
+            throw new ValidationException(
+                    String.format("공유장바구니의 수정가능여부 (%s) 와 요청한 상태 (%s) 가 같습니다.", cartShare.getEditPsblYn(), editPsblYn),
+                    ErrorCode.VALIDATION_CART_SHARE_EDIT_EXCEPTION);
+        }
     }
 }

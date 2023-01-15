@@ -44,4 +44,8 @@ public class CartShare extends BaseEntity {
         return CartShare.builder()
                 .build();
     }
+
+    public void updateEditPsblYn(boolean editPsblYn) {
+        this.editPsblYn = editPsblYn;
+    }
 }
