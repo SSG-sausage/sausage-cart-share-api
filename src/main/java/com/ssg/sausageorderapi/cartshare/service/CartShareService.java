@@ -4,11 +4,13 @@ import com.ssg.sausageorderapi.cartshare.dto.CartShareUpdateDto;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemCommUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemQtyUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.request.CartShareItemSaveRequest;
+import com.ssg.sausageorderapi.cartshare.dto.request.CartShareMbrProgUpdateRequest;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausageorderapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausageorderapi.cartshare.entity.CartShare;
 import com.ssg.sausageorderapi.cartshare.entity.CartShareItem;
 import com.ssg.sausageorderapi.cartshare.entity.CartShareMbr;
+import com.ssg.sausageorderapi.cartshare.entity.ProgStatCd;
 import com.ssg.sausageorderapi.cartshare.repository.CartShareItemRepository;
 import com.ssg.sausageorderapi.cartshare.repository.CartShareMbrRepository;
 import com.ssg.sausageorderapi.cartshare.repository.CartShareRepository;
@@ -100,6 +102,18 @@ public class CartShareService {
                 "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
     }
 
+    @Transactional
+    public void updateCartShareMbrProg(Long cartShareId, Long cartShareMbrId, Long mbrId,
+            CartShareMbrProgUpdateRequest request) {
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        CartShareMbr cartShareMbr = cartShareUtilService.findCartShareMbrById(cartShareMbrId);
+        validateCartShareMbr(cartShare, mbrId);
+        validateCartShareMbrProg(cartShareMbr, request.getProgStatCd());
+        cartShareMbr.updateProgStatCd(request.getProgStatCd());
+        simpMessagingTemplate.convertAndSend(
+                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+    }
+
     private void validateCartShareMbr(CartShare cartShare, Long mbrId) {
         Optional<CartShareMbr> cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(
                 cartShare, mbrId);
@@ -139,6 +153,15 @@ public class CartShareService {
             throw new ForbiddenException(
                     String.format("공유장바구니의 마스터 (%s) 가 아닌 멤버 (%s) 는 접근 권한이 없습니다.", cartShare.getMastrMbrId(), mbrId),
                     ErrorCode.FORBIDDEN_CART_SHARE_MASTR_ACCESS_EXCEPTION);
+        }
+    }
+
+    private void validateCartShareMbrProg(CartShareMbr cartShareMbr, ProgStatCd progStatCd) {
+        if (cartShareMbr.getProgStatCd().equals(progStatCd)) {
+            throw new ValidationException(
+                    String.format("공유장바구니멤버의 진행상태 (%s) 와 요청한 상태 (%s) 가 같습니다.", cartShareMbr.getProgStatCd(),
+                            progStatCd),
+                    ErrorCode.VALIDATION_CART_SHARE_MBR_PROG_EXCEPTION);
         }
     }
 }

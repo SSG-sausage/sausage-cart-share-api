@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum ProgStatCd {
-
-    NONE("없음"),
     IN_PROGRESS("담는 중"),
     DONE("담기 완료");
 

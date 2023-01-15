@@ -17,6 +17,7 @@ public enum ErrorCode {
     VALIDATION_WRONG_TYPE_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "잘못된 타입이 입력되었습니다."),
     VALIDATION_CART_SHARE_ITEM_QTY_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "공유장바구니상품 수량은 1보다 작을 수 없습니다."),
     VALIDATION_CART_SHARE_ITEM_COMM_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "공유장바구니상품 공통 여부가 이미 요청한 상태입니다."),
+    VALIDATION_CART_SHARE_MBR_PROG_EXCEPTION(ErrorStatusCode.BAD_REQUEST, "공유장바구니멤버 진행 상태가 이미 요청한 상태입니다."),
 
     /**
      * 401 UnAuthorized
@@ -37,6 +38,7 @@ public enum ErrorCode {
     NOT_FOUND_EXCEPTION(ErrorStatusCode.NOT_FOUND, "존재하지 않습니다."),
     NOT_FOUND_CART_SHARE_EXCEPTION(ErrorStatusCode.NOT_FOUND, "존재하지 않는 공유장바구니입니다."),
     NOT_FOUND_CART_SHARE_ITEM_EXCEPTION(ErrorStatusCode.NOT_FOUND, "존재하지 않는 공유장바구니상품입니다."),
+    NOT_FOUND_CART_SHARE_MBR_EXCEPTION(ErrorStatusCode.NOT_FOUND, "존재하지 않는 공유장바구니멤버입니다."),
 
     /**
      * 409 Conflict

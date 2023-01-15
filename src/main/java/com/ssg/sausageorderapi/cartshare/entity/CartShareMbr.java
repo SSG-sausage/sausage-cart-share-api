@@ -47,4 +47,8 @@ public class CartShareMbr extends BaseEntity {
         return CartShareMbr.builder()
                 .build();
     }
+
+    public void updateProgStatCd(ProgStatCd progStatCd) {
+        this.progStatCd = progStatCd;
+    }
 }
