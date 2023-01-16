@@ -2,7 +2,6 @@ package com.ssg.sausageorderapi.cartshare.dto.response;
 
 import com.ssg.sausageorderapi.cartshare.entity.CartShareItem;
 import com.ssg.sausageorderapi.common.client.internal.dto.response.ItemListInfoResponse.ItemInfo;
-import com.ssg.sausageorderapi.common.client.internal.dto.response.MbrListInfoResponse.MbrInfo;
 import com.ssg.sausageorderapi.common.util.PriceUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
@@ -20,36 +19,27 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
-public class CartSharePersonalItemInfo {
+public class CartShareCommonItemInfo {
 
-    @Schema(description = "멤버 이름")
-    private String mbrNm;
-
-    @Schema(description = "마스터 여부")
-    private boolean mastrYn;
-
-    @Schema(description = "개별 상품 총액")
-    private String personalAmt;
+    @Schema(description = "공동 상품 총액")
+    private String commonAmt;
 
     @Schema(description = "공유장바구니 상품 리스트")
     private List<CartShareItemInfo> cartShareItemList;
 
-    public static CartSharePersonalItemInfo of(Long mbrId, Long mastrId, List<CartShareItem> cartShareItemList,
-            Map<Long, MbrInfo> mbrInfoMap, Map<Long, ItemInfo> itemInfoMap) {
-        List<CartShareItemInfo> cartShareItemInfoList = cartShareItemList.stream().filter(cartShareItem ->
-                        !cartShareItem.getCommYn() && cartShareItem.getMbrId().equals(mbrId))
+    public static CartShareCommonItemInfo of(List<CartShareItem> cartShareItemList, Map<Long, ItemInfo> itemInfoMap) {
+        List<CartShareItemInfo> cartShareItemInfoList = cartShareItemList.stream()
+                .filter(CartShareItem::getCommYn)
                 .map(cartShareItem -> CartShareItemInfo.of(
                         cartShareItem, itemInfoMap.get(cartShareItem.getItemId())))
                 .collect(Collectors.toList());
-        return CartSharePersonalItemInfo.builder()
-                .mbrNm(mbrInfoMap.get(mbrId).getMbrNm())
-                .mastrYn(mbrId.equals(mastrId))
-                .personalAmt(PriceUtils.toString(calculatePersonalAmt(cartShareItemInfoList)))
+        return CartShareCommonItemInfo.builder()
+                .commonAmt(PriceUtils.toString(calculateCommonAmt(cartShareItemInfoList)))
                 .cartShareItemList(cartShareItemInfoList)
                 .build();
     }
 
-    private static int calculatePersonalAmt(List<CartShareItemInfo> cartShareItemInfoList) {
+    private static int calculateCommonAmt(List<CartShareItemInfo> cartShareItemInfoList) {
         return cartShareItemInfoList.stream()
                 .mapToInt(cartShareItemInfo ->
                         PriceUtils.toInt(cartShareItemInfo.getItemAmt()) * cartShareItemInfo.getItemQty()).sum();

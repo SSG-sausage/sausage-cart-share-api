@@ -15,11 +15,21 @@ import com.ssg.sausageorderapi.cartshare.entity.ProgStatCd;
 import com.ssg.sausageorderapi.cartshare.repository.CartShareItemRepository;
 import com.ssg.sausageorderapi.cartshare.repository.CartShareMbrRepository;
 import com.ssg.sausageorderapi.cartshare.repository.CartShareRepository;
+import com.ssg.sausageorderapi.common.client.internal.ItemApiClient;
+import com.ssg.sausageorderapi.common.client.internal.MemberApiClient;
+import com.ssg.sausageorderapi.common.client.internal.dto.response.ItemListInfoResponse.ItemInfo;
+import com.ssg.sausageorderapi.common.client.internal.dto.response.MbrListInfoResponse.MbrInfo;
 import com.ssg.sausageorderapi.common.exception.ErrorCode;
 import com.ssg.sausageorderapi.common.exception.ForbiddenException;
 import com.ssg.sausageorderapi.common.exception.ValidationException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -30,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CartShareService {
 
+    private final MemberApiClient memberApiClient;
+    private final ItemApiClient itemApiClient;
     private final CartShareRepository cartShareRepository;
     private final CartShareMbrRepository cartShareMbrRepository;
     private final CartShareItemRepository cartShareItemRepository;
@@ -46,7 +58,18 @@ public class CartShareService {
         validateCartShareMbr(cartShare, mbrId);
         List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare);
         List<CartShareItem> cartShareItemList = cartShareItemRepository.findAllByCartShare(cartShare);
-        return CartShareFindResponse.of(cartShare, cartShareMbrList, cartShareItemList);
+        List<Long> mbrIdList = cartShareMbrList.stream()
+                .sorted(Comparator.comparing(CartShareMbr::getRegDts))
+                .map(CartShareMbr::getMbrId)
+                .collect(Collectors.toList());
+        List<Long> itemIdList = cartShareItemList.stream()
+                .map(CartShareItem::getItemId)
+                .distinct()
+                .collect(Collectors.toList());
+        Map<Long, MbrInfo> mbrInfoMap = memberApiClient.getMbrListInfo(mbrIdList).getData().getMbrMap();
+        Map<Long, ItemInfo> itemInfoMap = itemApiClient.getItemListInfo(itemIdList).getData().getItemMap();
+        return CartShareFindResponse.of(mbrId, sortMeFirst(mbrId, mbrIdList), cartShare,
+                cartShareMbrList, cartShareItemList, mbrInfoMap, itemInfoMap);
     }
 
     @Transactional
@@ -217,5 +240,12 @@ public class CartShareService {
                     String.format("공유장바구니의 수정가능여부가 (%s) 라서 수정할 수 없습니다.", cartShare.getEditPsblYn()),
                     ErrorCode.VALIDATION_CART_SHARE_EDIT_PSBL_TRUE_EXCEPTION);
         }
+    }
+
+    private List<Long> sortMeFirst(Long myId, List<Long> mbrIdList) {
+        Set<Long> result = new HashSet<>();
+        result.add(myId);
+        result.addAll(mbrIdList);
+        return new ArrayList<>(result);
     }
 }
