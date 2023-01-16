@@ -59,4 +59,8 @@ public class CartShareItem extends BaseEntity {
     public void addItemQty(int itemQty) {
         this.itemQty += itemQty;
     }
+
+    public void updateCommYn(boolean commYn) {
+        this.commYn = commYn;
+    }
 }
