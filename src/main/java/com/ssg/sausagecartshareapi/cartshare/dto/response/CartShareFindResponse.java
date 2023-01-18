@@ -38,6 +38,9 @@ public class CartShareFindResponse {
     @Schema(description = "공유장바구니 멤버 수")
     private int cartShareMbrCnt;
 
+    @Schema(description = "마스터 이름")
+    private String mastrNm;
+
     @Schema(description = "공유장바구니 배송지")
     private String cartShareAddr;
 
@@ -60,6 +63,7 @@ public class CartShareFindResponse {
                 .cartShareItemQty(
                         cartShareItemList.stream().map(CartShareItem::getItemId).collect(Collectors.toSet()).size())
                 .cartShareMbrCnt(cartShareMbrList.size())
+                .mastrNm(mbrInfoMap.get(cartShare.getMastrMbrId()).getMbrNm())
                 .cartShareAddr(cartShare.getCartShareAddr())
                 .commonItemInfo(CartShareCommonItemInfo.of(cartShareItemList, itemInfoMap))
                 .personalItemInfo(mbrIdList.stream()
