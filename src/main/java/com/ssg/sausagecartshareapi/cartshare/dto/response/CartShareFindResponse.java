@@ -3,6 +3,7 @@ package com.ssg.sausagecartshareapi.cartshare.dto.response;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShare;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareItem;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareMbr;
+import com.ssg.sausagecartshareapi.cartshare.entity.ProgStatCd;
 import com.ssg.sausagecartshareapi.common.client.internal.dto.response.ItemListInfoResponse.ItemInfo;
 import com.ssg.sausagecartshareapi.common.client.internal.dto.response.MbrListInfoResponse.MbrInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,6 +39,9 @@ public class CartShareFindResponse {
     @Schema(description = "공유장바구니 멤버 수")
     private int cartShareMbrCnt;
 
+    @Schema(description = "공유장바구니 고르고 있는 멤버 수")
+    private int cartShareChoosingMbrCnt;
+
     @Schema(description = "마스터 이름")
     private String mastrNm;
 
@@ -63,6 +67,11 @@ public class CartShareFindResponse {
                 .cartShareItemQty(
                         cartShareItemList.stream().map(CartShareItem::getItemId).collect(Collectors.toSet()).size())
                 .cartShareMbrCnt(cartShareMbrList.size())
+                .cartShareChoosingMbrCnt(
+                        (int) cartShareMbrList.stream()
+                                .filter(cartShareMbr -> !cartShareMbr.getMbrId().equals(cartShare.getMastrMbrId())
+                                        && cartShareMbr.getProgStatCd().equals(ProgStatCd.IN_PROGRESS))
+                                .count())
                 .mastrNm(mbrInfoMap.get(cartShare.getMastrMbrId()).getMbrNm())
                 .cartShareAddr(cartShare.getCartShareAddr())
                 .commonItemInfo(CartShareCommonItemInfo.of(cartShareItemList, itemInfoMap))
