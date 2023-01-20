@@ -2,7 +2,6 @@ package com.ssg.sausagecartshareapi.cartshare.dto.response;
 
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareItem;
 import com.ssg.sausagecartshareapi.common.client.internal.dto.response.ItemListInfoResponse.ItemInfo;
-import com.ssg.sausagecartshareapi.common.util.PriceUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.Map;
@@ -22,40 +21,40 @@ import lombok.ToString;
 public class CartShareAmtInfo {
 
     @Schema(description = "쓱배송 주문금액")
-    private String ssgOrdAmt;
+    private int ssgOrdAmt;
 
     @Schema(description = "쓱배송 배송비")
-    private String ssgShppAmt;
+    private int ssgShppAmt;
 
     @Schema(description = "쓱배송 총금액")
-    private String ssgTotalAmt;
+    private int ssgTotalAmt;
 
     @Schema(description = "쓱배송 무료배송까지 남은 금액")
-    private String ssgFreeShppRemainAmt;
+    private int ssgFreeShppRemainAmt;
 
     @Schema(description = "트레이더스 주문금액")
-    private String tradersOrdAmt;
+    private int tradersOrdAmt;
 
     @Schema(description = "트레이더스 배송비")
-    private String tradersShppAmt;
+    private int tradersShppAmt;
 
     @Schema(description = "트레이더스 총금액")
-    private String tradersTotalAmt;
+    private int tradersTotalAmt;
 
     @Schema(description = "트레이더스 무료배송까지 남은 금액")
-    private String tradersFreeShppRemainAmt;
+    private int tradersFreeShppRemainAmt;
 
     @Schema(description = "주문금액")
-    private String ordAmt;
+    private int ordAmt;
 
     @Schema(description = "상품할인")
-    private String discountAmt;
+    private int discountAmt;
 
     @Schema(description = "배송비")
-    private String shppAmt;
+    private int shppAmt;
 
     @Schema(description = "총 결제 예정 금액")
-    private String totalAmt;
+    private int totalAmt;
 
     @Schema(description = "총 상품 개수")
     private int itemQty;
@@ -80,18 +79,18 @@ public class CartShareAmtInfo {
         int ordAmt = ssgOrdAmt + tradersOrdAmt;
         int shppAmt = ssgShppAmt + tradersShppAmt;
         return CartShareAmtInfo.builder()
-                .ssgOrdAmt(PriceUtils.toString(ssgOrdAmt))
-                .ssgShppAmt(PriceUtils.toString(ssgShppAmt))
-                .ssgTotalAmt(PriceUtils.toString(ssgOrdAmt + ssgShppAmt))
-                .ssgFreeShppRemainAmt(PriceUtils.toString(ssgFreeShppRemainAmt))
-                .tradersOrdAmt(PriceUtils.toString(tradersOrdAmt))
-                .tradersShppAmt(PriceUtils.toString(tradersShppAmt))
-                .tradersTotalAmt(PriceUtils.toString(tradersOrdAmt + tradersShppAmt))
-                .tradersFreeShppRemainAmt(PriceUtils.toString(tradersFreeShppRemainAmt))
-                .ordAmt(PriceUtils.toString(ordAmt))
-                .discountAmt(PriceUtils.toString(0))
-                .shppAmt(PriceUtils.toString(shppAmt))
-                .totalAmt(PriceUtils.toString(ordAmt + shppAmt))
+                .ssgOrdAmt(ssgOrdAmt)
+                .ssgShppAmt(ssgShppAmt)
+                .ssgTotalAmt(ssgOrdAmt + ssgShppAmt)
+                .ssgFreeShppRemainAmt(ssgFreeShppRemainAmt)
+                .tradersOrdAmt(tradersOrdAmt)
+                .tradersShppAmt(tradersShppAmt)
+                .tradersTotalAmt(tradersOrdAmt + tradersShppAmt)
+                .tradersFreeShppRemainAmt(tradersFreeShppRemainAmt)
+                .ordAmt(ordAmt)
+                .discountAmt(0)
+                .shppAmt(shppAmt)
+                .totalAmt(ordAmt + shppAmt)
                 .itemQty(cartShareItemList.stream().map(CartShareItem::getItemId).collect(Collectors.toSet()).size())
                 .build();
     }

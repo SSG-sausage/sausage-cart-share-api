@@ -2,7 +2,6 @@ package com.ssg.sausagecartshareapi.cartshare.dto.response;
 
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareItem;
 import com.ssg.sausagecartshareapi.common.client.internal.dto.response.ItemListInfoResponse.ItemInfo;
-import com.ssg.sausagecartshareapi.common.util.PriceUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,9 +30,9 @@ public class CartShareItemInfo {
     private String itemNm;
 
     @Schema(description = "상품 가격")
-    private String itemAmt;
+    private int itemAmt;
 
-    @Schema(description = "상품 수량")
+    @Schema(description = "상품 이미지")
     private String itemImgUrl;
 
     @Schema(description = "배송타입코드")
@@ -48,7 +47,7 @@ public class CartShareItemInfo {
                 .itemId(itemInfo.getItemId())
                 .itemBrandNm(itemInfo.getItemBrandNm())
                 .itemNm(itemInfo.getItemNm())
-                .itemAmt(PriceUtils.toString(itemInfo.getItemAmt()))
+                .itemAmt(itemInfo.getItemAmt())
                 .itemImgUrl(itemInfo.getItemImgUrl())
                 .shppCd(itemInfo.getShppCd())
                 .itemQty(cartShareItem.getItemQty())

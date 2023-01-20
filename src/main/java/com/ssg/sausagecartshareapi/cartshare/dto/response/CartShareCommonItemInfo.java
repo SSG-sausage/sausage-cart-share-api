@@ -2,7 +2,6 @@ package com.ssg.sausagecartshareapi.cartshare.dto.response;
 
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareItem;
 import com.ssg.sausagecartshareapi.common.client.internal.dto.response.ItemListInfoResponse.ItemInfo;
-import com.ssg.sausagecartshareapi.common.util.PriceUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,7 @@ import lombok.ToString;
 public class CartShareCommonItemInfo {
 
     @Schema(description = "공동 상품 총액")
-    private String commonAmt;
+    private int commonAmt;
 
     @Schema(description = "공유장바구니 상품 리스트")
     private List<CartShareItemInfo> cartShareItemList;
@@ -34,14 +33,13 @@ public class CartShareCommonItemInfo {
                         cartShareItem, itemInfoMap.get(cartShareItem.getItemId())))
                 .collect(Collectors.toList());
         return CartShareCommonItemInfo.builder()
-                .commonAmt(PriceUtils.toString(calculateCommonAmt(cartShareItemInfoList)))
+                .commonAmt(calculateCommonAmt(cartShareItemInfoList))
                 .cartShareItemList(cartShareItemInfoList)
                 .build();
     }
 
     private static int calculateCommonAmt(List<CartShareItemInfo> cartShareItemInfoList) {
         return cartShareItemInfoList.stream()
-                .mapToInt(cartShareItemInfo ->
-                        PriceUtils.toInt(cartShareItemInfo.getItemAmt()) * cartShareItemInfo.getItemQty()).sum();
+                .mapToInt(cartShareItemInfo -> cartShareItemInfo.getItemAmt() * cartShareItemInfo.getItemQty()).sum();
     }
 }
