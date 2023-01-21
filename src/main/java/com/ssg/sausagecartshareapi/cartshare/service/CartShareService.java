@@ -22,13 +22,10 @@ import com.ssg.sausagecartshareapi.common.client.internal.dto.response.MbrListIn
 import com.ssg.sausagecartshareapi.common.exception.ErrorCode;
 import com.ssg.sausagecartshareapi.common.exception.ForbiddenException;
 import com.ssg.sausagecartshareapi.common.exception.ValidationException;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -56,10 +53,11 @@ public class CartShareService {
     public CartShareFindResponse findCartShare(Long cartShareId, Long mbrId) {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
         validateCartShareMbr(cartShare, mbrId);
-        List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare);
+        List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare).stream()
+                .sorted(Comparator.comparing(CartShareMbr::getRegDts))
+                .collect(Collectors.toList());
         List<CartShareItem> cartShareItemList = cartShareItemRepository.findAllByCartShare(cartShare);
         List<Long> mbrIdList = cartShareMbrList.stream()
-                .sorted(Comparator.comparing(CartShareMbr::getRegDts))
                 .map(CartShareMbr::getMbrId)
                 .collect(Collectors.toList());
         List<Long> itemIdList = cartShareItemList.stream()
@@ -68,8 +66,8 @@ public class CartShareService {
                 .collect(Collectors.toList());
         Map<Long, MbrInfo> mbrInfoMap = memberApiClient.getMbrListInfo(mbrIdList).getData().getMbrMap();
         Map<Long, ItemInfo> itemInfoMap = itemApiClient.getItemListInfo(itemIdList).getData().getItemMap();
-        return CartShareFindResponse.of(mbrId, sortMeFirst(mbrId, mbrIdList), cartShare,
-                cartShareMbrList, cartShareItemList, mbrInfoMap, itemInfoMap);
+        return CartShareFindResponse.of(mbrId, cartShare, sortMeFirst(mbrId, cartShareMbrList), cartShareItemList,
+                mbrInfoMap, itemInfoMap);
     }
 
     @Transactional
@@ -242,10 +240,10 @@ public class CartShareService {
         }
     }
 
-    private List<Long> sortMeFirst(Long myId, List<Long> mbrIdList) {
-        Set<Long> result = new HashSet<>();
-        result.add(myId);
-        result.addAll(mbrIdList);
-        return new ArrayList<>(result);
+    private List<CartShareMbr> sortMeFirst(Long myId, List<CartShareMbr> cartShareMbrList) {
+        List<CartShareMbr> result = cartShareMbrList.stream().filter(mbr ->
+                !mbr.getMbrId().equals(myId)).collect(Collectors.toList());
+        result.add(0, cartShareMbrList.stream().filter(mbr -> mbr.getMbrId().equals(myId)).findFirst().get());
+        return result;
     }
 }

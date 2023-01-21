@@ -57,7 +57,7 @@ public class CartShareFindResponse {
     @Schema(description = "공유장바구니 결제 정보")
     private CartShareAmtInfo cartShareAmtInfo;
 
-    public static CartShareFindResponse of(Long myId, List<Long> mbrIdList, CartShare cartShare,
+    public static CartShareFindResponse of(Long myId, CartShare cartShare,
             List<CartShareMbr> cartShareMbrList, List<CartShareItem> cartShareItemList,
             Map<Long, MbrInfo> mbrInfoMap, Map<Long, ItemInfo> itemInfoMap) {
         return CartShareFindResponse.builder()
@@ -75,8 +75,8 @@ public class CartShareFindResponse {
                 .mastrNm(mbrInfoMap.get(cartShare.getMastrMbrId()).getMbrNm())
                 .cartShareAddr(cartShare.getCartShareAddr())
                 .commonItemInfo(CartShareCommonItemInfo.of(cartShareItemList, itemInfoMap))
-                .personalItemInfo(mbrIdList.stream()
-                        .map(mbrId -> CartSharePersonalItemInfo.of(mbrId, cartShare.getMastrMbrId(),
+                .personalItemInfo(cartShareMbrList.stream()
+                        .map(cartShareMbr -> CartSharePersonalItemInfo.of(myId, cartShareMbr, cartShare.getMastrMbrId(),
                                 cartShareItemList, mbrInfoMap, itemInfoMap))
                         .collect(Collectors.toList()))
                 .cartShareAmtInfo(CartShareAmtInfo.of(cartShareItemList, itemInfoMap))
