@@ -7,6 +7,6 @@ server:
 
 spring:
   application:
-    name: SAUSAGE-ORDER-API
+    name: SAUSAGE-CART-SHARE-API
   profiles:
     default: local
