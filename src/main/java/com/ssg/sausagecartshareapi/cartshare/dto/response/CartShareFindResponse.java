@@ -27,6 +27,9 @@ public class CartShareFindResponse {
     @Schema(description = "공유장바구니 id")
     private Long cartShareId;
 
+    @Schema(description = "공유장바구니멤버 id")
+    private Long cartShareMbrId;
+
     @Schema(description = "마스터 여부")
     private boolean mastrYn;
 
@@ -57,11 +60,18 @@ public class CartShareFindResponse {
     @Schema(description = "공유장바구니 결제 정보")
     private CartShareAmtInfo cartShareAmtInfo;
 
-    public static CartShareFindResponse of(Long myId, CartShare cartShare,
+    @Schema(description = "멤버 진행 상태")
+    private ProgStatCd progStatCd;
+
+    @Schema(description = "공유장바구니 수정 가능 여부")
+    private boolean editPsblYn;
+
+    public static CartShareFindResponse of(Long myId, CartShare cartShare, CartShareMbr cartShareMbr,
             List<CartShareMbr> cartShareMbrList, List<CartShareItem> cartShareItemList,
             Map<Long, MbrInfo> mbrInfoMap, Map<Long, ItemInfo> itemInfoMap) {
         return CartShareFindResponse.builder()
                 .cartShareId(cartShare.getCartShareId())
+                .cartShareMbrId(cartShareMbr.getCartShareMbrId())
                 .mastrYn(myId.equals(cartShare.getMastrMbrId()))
                 .cartShareNm(cartShare.getCartShareNm())
                 .cartShareItemQty(
@@ -69,17 +79,19 @@ public class CartShareFindResponse {
                 .cartShareMbrCnt(cartShareMbrList.size())
                 .cartShareChoosingMbrCnt(
                         (int) cartShareMbrList.stream()
-                                .filter(cartShareMbr -> !cartShareMbr.getMbrId().equals(cartShare.getMastrMbrId())
-                                        && cartShareMbr.getProgStatCd().equals(ProgStatCd.IN_PROGRESS))
+                                .filter(mbr -> !mbr.getMbrId().equals(cartShare.getMastrMbrId())
+                                        && mbr.getProgStatCd().equals(ProgStatCd.IN_PROGRESS))
                                 .count())
                 .mastrNm(mbrInfoMap.get(cartShare.getMastrMbrId()).getMbrNm())
                 .cartShareAddr(cartShare.getCartShareAddr())
                 .commonItemInfo(CartShareCommonItemInfo.of(cartShareItemList, itemInfoMap))
                 .personalItemInfo(cartShareMbrList.stream()
-                        .map(cartShareMbr -> CartSharePersonalItemInfo.of(myId, cartShareMbr, cartShare.getMastrMbrId(),
+                        .map(mbr -> CartSharePersonalItemInfo.of(myId, mbr, cartShare.getMastrMbrId(),
                                 cartShareItemList, mbrInfoMap, itemInfoMap))
                         .collect(Collectors.toList()))
                 .cartShareAmtInfo(CartShareAmtInfo.of(cartShareItemList, itemInfoMap))
+                .progStatCd(cartShareMbr.getProgStatCd())
+                .editPsblYn(cartShare.getEditPsblYn())
                 .build();
     }
 }

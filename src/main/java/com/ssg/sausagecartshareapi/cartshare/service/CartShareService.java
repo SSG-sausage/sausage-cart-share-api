@@ -53,6 +53,7 @@ public class CartShareService {
     public CartShareFindResponse findCartShare(Long cartShareId, Long mbrId) {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
         validateCartShareMbr(cartShare, mbrId);
+        CartShareMbr cartShareMbr = cartShareUtilService.findCartShareMbrByCartShareAndMbrId(cartShare, mbrId);
         List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare).stream()
                 .sorted(Comparator.comparing(CartShareMbr::getRegDts))
                 .collect(Collectors.toList());
@@ -66,8 +67,8 @@ public class CartShareService {
                 .collect(Collectors.toList());
         Map<Long, MbrInfo> mbrInfoMap = memberApiClient.getMbrListInfo(mbrIdList).getData().getMbrMap();
         Map<Long, ItemInfo> itemInfoMap = itemApiClient.getItemListInfo(itemIdList).getData().getItemMap();
-        return CartShareFindResponse.of(mbrId, cartShare, sortMeFirst(mbrId, cartShareMbrList), cartShareItemList,
-                mbrInfoMap, itemInfoMap);
+        return CartShareFindResponse.of(mbrId, cartShare, cartShareMbr, sortMeFirst(cartShareMbr, cartShareMbrList),
+                cartShareItemList, mbrInfoMap, itemInfoMap);
     }
 
     @Transactional
@@ -240,10 +241,9 @@ public class CartShareService {
         }
     }
 
-    private List<CartShareMbr> sortMeFirst(Long myId, List<CartShareMbr> cartShareMbrList) {
-        List<CartShareMbr> result = cartShareMbrList.stream().filter(mbr ->
-                !mbr.getMbrId().equals(myId)).collect(Collectors.toList());
-        result.add(0, cartShareMbrList.stream().filter(mbr -> mbr.getMbrId().equals(myId)).findFirst().get());
-        return result;
+    private List<CartShareMbr> sortMeFirst(CartShareMbr cartShareMbr, List<CartShareMbr> cartShareMbrList) {
+        cartShareMbrList.remove(cartShareMbr);
+        cartShareMbrList.add(0, cartShareMbr);
+        return cartShareMbrList;
     }
 }

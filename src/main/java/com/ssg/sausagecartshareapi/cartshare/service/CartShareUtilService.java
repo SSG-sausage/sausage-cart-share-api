@@ -40,4 +40,13 @@ public class CartShareUtilService {
                 () -> new NotFoundException(String.format("존재하지 않는 CART_SHARE_MBR (%s) 입니다.", cartShareMbrId),
                         ErrorCode.NOT_FOUND_CART_SHARE_MBR_EXCEPTION));
     }
+
+    public CartShareMbr findCartShareMbrByCartShareAndMbrId(CartShare cartShare, Long mbrId) {
+        Optional<CartShareMbr> cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(cartShare,
+                mbrId);
+        return cartShareMbr.orElseThrow(
+                () -> new NotFoundException(String.format("존재하지 않는 멤버 (%s) 공유장바구니 (%s) 의 CART_SHARE_MBR 입니다.",
+                        mbrId, cartShare.getCartShareId()),
+                        ErrorCode.NOT_FOUND_CART_SHARE_MBR_EXCEPTION));
+    }
 }
