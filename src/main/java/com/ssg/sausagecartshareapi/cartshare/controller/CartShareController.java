@@ -188,4 +188,17 @@ public class CartShareController {
         return SuccessResponse.success(SuccessCode.FIND_CART_SHARE_MBR_LIST_SUCCESS,
                 cartShareService.findCartShareMbrIdList(cartShareId));
     }
+
+    @Operation(summary = "[internal] 장바구니 멤버 권한 체크", responses = {
+            @ApiResponse(responseCode = "200", description = "장바구니 멤버 권한 체크 성공입니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 공유장바구니입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @GetMapping("/cart-share/{cartShareId}/mbr/{mbrId}/validation")
+    public ResponseEntity<SuccessResponse<Boolean>> validateCartShareMbr(
+            @PathVariable Long cartShareId,
+            @PathVariable Long mbrId) {
+        return SuccessResponse.success(SuccessCode.VALIDATE_CART_SHARE_MBR_SUCCESS,
+                cartShareService.validateCartShareMbr(cartShareId, mbrId));
+    }
 }

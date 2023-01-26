@@ -176,6 +176,13 @@ public class CartShareService {
         return CartShareMbrIdListResponse.of(cartShare, cartShareMbrList);
     }
 
+    public boolean validateCartShareMbr(Long cartShareId, Long mbrId) {
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        Optional<CartShareMbr> cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(
+                cartShare, mbrId);
+        return cartShareMbr.isPresent();
+    }
+
     private void validateCartShareMbr(CartShare cartShare, Long mbrId) {
         Optional<CartShareMbr> cartShareMbr = cartShareMbrRepository.findCartShareMbrByCartShareAndMbrId(
                 cartShare, mbrId);
