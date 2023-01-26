@@ -9,6 +9,7 @@ import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareMbrProgUpdateR
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemListResponse;
+import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareMbrIdListResponse;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShare;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareItem;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareMbr;
@@ -167,6 +168,12 @@ public class CartShareService {
                 .collect(Collectors.toList());
         Map<Long, ItemInfo> itemInfoMap = itemApiClient.getItemListInfo(itemIdList).getData().getItemMap();
         return CartShareItemListResponse.of(cartShareItemList, itemInfoMap);
+    }
+
+    public CartShareMbrIdListResponse findCartShareMbrIdList(Long cartShareId) {
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare);
+        return CartShareMbrIdListResponse.of(cartShare, cartShareMbrList);
     }
 
     private void validateCartShareMbr(CartShare cartShare, Long mbrId) {
