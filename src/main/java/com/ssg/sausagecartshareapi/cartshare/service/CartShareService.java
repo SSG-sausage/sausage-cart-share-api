@@ -18,7 +18,7 @@ import com.ssg.sausagecartshareapi.cartshare.repository.CartShareItemRepository;
 import com.ssg.sausagecartshareapi.cartshare.repository.CartShareMbrRepository;
 import com.ssg.sausagecartshareapi.cartshare.repository.CartShareRepository;
 import com.ssg.sausagecartshareapi.common.client.internal.ItemApiClient;
-import com.ssg.sausagecartshareapi.common.client.internal.MemberApiClient;
+import com.ssg.sausagecartshareapi.common.client.internal.MbrApiClient;
 import com.ssg.sausagecartshareapi.common.client.internal.dto.response.ItemListInfoResponse.ItemInfo;
 import com.ssg.sausagecartshareapi.common.client.internal.dto.response.MbrListInfoResponse.MbrInfo;
 import com.ssg.sausagecartshareapi.common.exception.ErrorCode;
@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CartShareService {
 
-    private final MemberApiClient memberApiClient;
+    private final MbrApiClient mbrApiClient;
     private final ItemApiClient itemApiClient;
     private final CartShareRepository cartShareRepository;
     private final CartShareMbrRepository cartShareMbrRepository;
@@ -67,7 +67,7 @@ public class CartShareService {
                 .map(CartShareItem::getItemId)
                 .distinct()
                 .collect(Collectors.toList());
-        Map<Long, MbrInfo> mbrInfoMap = memberApiClient.getMbrListInfo(mbrIdList).getData().getMbrMap();
+        Map<Long, MbrInfo> mbrInfoMap = mbrApiClient.getMbrListInfo(mbrIdList).getData().getMbrMap();
         Map<Long, ItemInfo> itemInfoMap = itemApiClient.getItemListInfo(itemIdList).getData().getItemMap();
         return CartShareFindResponse.of(mbrId, cartShare, cartShareMbr, sortMeFirst(cartShareMbr, cartShareMbrList),
                 cartShareItemList, mbrInfoMap, itemInfoMap);
