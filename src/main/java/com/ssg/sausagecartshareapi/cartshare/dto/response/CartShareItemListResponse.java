@@ -52,7 +52,7 @@ public class CartShareItemListResponse {
         private int itemQty;
 
         @Schema(description = "공통상품여부")
-        private boolean comYn;
+        private boolean commYn;
 
         private static CartShareItemInfo of(CartShareItem cartShareItem, ItemInfo itemInfo) {
             return CartShareItemInfo.builder()
@@ -63,7 +63,7 @@ public class CartShareItemListResponse {
                     .itemAmt(itemInfo.getItemAmt())
                     .shppCd(itemInfo.getShppCd())
                     .itemQty(cartShareItem.getItemQty())
-                    .comYn(cartShareItem.getCommYn())
+                    .commYn(cartShareItem.getCommYn())
                     .build();
         }
     }
