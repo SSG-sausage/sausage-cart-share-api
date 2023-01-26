@@ -8,6 +8,7 @@ import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareItemSaveReques
 import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareMbrProgUpdateRequest;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindResponse;
+import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemListResponse;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShare;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareItem;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareMbr;
@@ -155,6 +156,17 @@ public class CartShareService {
         cartShare.updateEditPsblYn(request.isEditPsblYn());
         simpMessagingTemplate.convertAndSend(
                 "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+    }
+
+    public CartShareItemListResponse findCartShareItemList(Long cartShareId) {
+        CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        List<CartShareItem> cartShareItemList = cartShareItemRepository.findAllByCartShare(cartShare);
+        List<Long> itemIdList = cartShareItemList.stream()
+                .map(CartShareItem::getItemId)
+                .distinct()
+                .collect(Collectors.toList());
+        Map<Long, ItemInfo> itemInfoMap = itemApiClient.getItemListInfo(itemIdList).getData().getItemMap();
+        return CartShareItemListResponse.of(cartShareItemList, itemInfoMap);
     }
 
     private void validateCartShareMbr(CartShare cartShare, Long mbrId) {

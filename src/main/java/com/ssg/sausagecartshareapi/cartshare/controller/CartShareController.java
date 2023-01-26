@@ -7,6 +7,7 @@ import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareItemSaveReques
 import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareMbrProgUpdateRequest;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindResponse;
+import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemListResponse;
 import com.ssg.sausagecartshareapi.cartshare.service.CartShareService;
 import com.ssg.sausagecartshareapi.common.config.resolver.MbrId;
 import com.ssg.sausagecartshareapi.common.dto.ErrorResponse;
@@ -161,5 +162,17 @@ public class CartShareController {
             @Valid @RequestBody CartShareEditUpdateRequest request) {
         cartShareService.updateCartShareEdit(cartShareId, mbrId, request);
         return SuccessResponse.OK;
+    }
+
+    @Operation(summary = "[internal] 장바구니 상품 리스트 조회", responses = {
+            @ApiResponse(responseCode = "200", description = "장바구니 상품 리스트 조회 성공입니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 공유장바구니입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @GetMapping("/cart-share/{cartShareId}/cart-share-item")
+    public ResponseEntity<SuccessResponse<CartShareItemListResponse>> findCartShareItemList(
+            @PathVariable Long cartShareId) {
+        return SuccessResponse.success(SuccessCode.FIND_CART_SHARE_ITEM_LIST_SUCCESS,
+                cartShareService.findCartShareItemList(cartShareId));
     }
 }
