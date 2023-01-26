@@ -17,6 +17,7 @@ public enum SuccessCode {
     FIND_CART_SHARE_ITEM_LIST_SUCCESS(SuccessStatusCode.OK, "장바구니 상품 리스트 조회 성공입니다."),
     FIND_CART_SHARE_MBR_LIST_SUCCESS(SuccessStatusCode.OK, "장바구니 멤버 리스트 조회 성공입니다."),
     VALIDATE_CART_SHARE_MBR_SUCCESS(SuccessStatusCode.OK, "장바구니 멤버 권한 체크 성공입니다."),
+    VALIDATE_CART_SHARE_MASTR_SUCCESS(SuccessStatusCode.OK, "장바구니 마스터 권한 체크 성공입니다."),
 
     /**
      * 201 CREATED
