@@ -8,6 +8,7 @@ import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindListRespo
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareMbrIdListResponse;
+import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareNotiFindListResponse;
 import com.ssg.sausagecartshareapi.cartshare.service.CartShareService;
 import com.ssg.sausagecartshareapi.common.config.resolver.MbrId;
 import com.ssg.sausagecartshareapi.common.dto.ErrorResponse;
@@ -146,6 +147,17 @@ public class CartShareController {
             @Valid @RequestBody CartShareMbrProgUpdateRequest request) {
         cartShareService.updateCartShareMbrProg(cartShareId, cartShareMbrId, mbrId, request);
         return SuccessResponse.OK;
+    }
+
+    @Operation(summary = "[external] 장바구니 알림 리스트 조회", responses = {
+            @ApiResponse(responseCode = "200", description = "장바구니 알림 내역 리스트 성공입니다."),
+            @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @GetMapping("/cart-share/noti")
+    public ResponseEntity<SuccessResponse<CartShareNotiFindListResponse>> findCartShareNotiList(
+            @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId) {
+        return SuccessResponse.success(SuccessCode.FIND_CART_SHARE_NOTI_LIST_SUCCESS,
+                cartShareService.findCartShareNotiList(mbrId));
     }
 
     @Operation(summary = "[internal] 장바구니 상품 리스트 조회", responses = {

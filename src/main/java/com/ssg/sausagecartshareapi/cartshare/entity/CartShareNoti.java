@@ -51,4 +51,8 @@ public class CartShareNoti extends BaseEntity {
                 .readYn(false)
                 .build();
     }
+
+    public void updateReadYn() {
+        this.readYn = true;
+    }
 }

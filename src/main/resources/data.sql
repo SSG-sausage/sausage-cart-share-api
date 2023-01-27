@@ -18,3 +18,11 @@ VALUES (1, 1, 1, 1, false, 1, "2023-01-01", 1, "2023-01-01", 1),
        (2, 1, 2, 1, false, 2, "2023-01-01", 1, "2023-01-01", 1),
        (3, 2, 3, 1, false, 5, "2023-01-01", 2, "2023-01-01", 2),
        (4, 1, 4, 1, true, 10, "2023-01-01", 3, "2023-01-01", 3);
+
+INSERT INTO CART_SHARE_NOTI
+(CART_SHARE_NOTI_ID, MBR_ID, NOTI_CD, CART_SHARE_NOTI_CNTT, READ_YN, REG_DTS, MOD_DTS)
+VALUES (1, 1, "CART_SHARE", "cart share 1", 0, "2023-01-01", "2023-01-01"),
+       (2, 1, "CART_SHARE", "cart share 2", 0, "2023-01-01", "2023-01-01"),
+       (3, 1, "CART_SHARE_ORD", "cart share ord 1", 0, "2023-01-01", "2023-01-01"),
+       (4, 1, "CART_SHARE_ORD", "cart share ord 2", 0, "2023-01-01", "2023-01-01"),
+       (5, 1, "CART_SHARE_CAL", "cart share cal 1", 0, "2023-01-01", "2023-01-01");
