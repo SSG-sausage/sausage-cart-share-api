@@ -9,6 +9,7 @@ import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindListRespo
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareMbrIdListResponse;
+import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareNotiCntResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareNotiFindListResponse;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShare;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareItem;
@@ -159,6 +160,12 @@ public class CartShareService {
                 .filter(cartShareNoti -> !cartShareNoti.getReadYn())
                 .forEach(CartShareNoti::updateReadYn);
         return response;
+    }
+
+    @Transactional
+    public CartShareNotiCntResponse findCartShareNotiCnt(Long mbrId) {
+        List<CartShareNoti> readNCartShareNotiList = cartShareNotiRepository.findReadNCartShareNotiListByMbrId(mbrId);
+        return CartShareNotiCntResponse.of(readNCartShareNotiList.size());
     }
 
     public CartShareItemListResponse findCartShareItemList(Long cartShareId) {
