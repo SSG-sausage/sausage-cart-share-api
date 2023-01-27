@@ -22,13 +22,13 @@ public class CartShareMbrIdListResponse {
     @Schema(description = "마스터 ID")
     private Long mastrMbrId;
 
-    @Schema(description = "공유장바구니멤버 ID 리스트")
-    private List<Long> cartShareMbrIdList;
+    @Schema(description = "멤버 ID 리스트")
+    private List<Long> mbrIdList;
 
     public static CartShareMbrIdListResponse of(CartShare cartShare, List<CartShareMbr> cartShareMbrList) {
         return CartShareMbrIdListResponse.builder()
                 .mastrMbrId(cartShare.getMastrMbrId())
-                .cartShareMbrIdList(cartShareMbrList.stream()
+                .mbrIdList(cartShareMbrList.stream()
                         .map(CartShareMbr::getMbrId)
                         .collect(Collectors.toList()))
                 .build();
