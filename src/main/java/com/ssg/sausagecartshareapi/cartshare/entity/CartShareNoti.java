@@ -42,4 +42,13 @@ public class CartShareNoti extends BaseEntity {
 
     @Column(name = "READ_YN")
     private Boolean readYn;
+
+    public static CartShareNoti newInstance(Long mbrId, NotiCd notiCd, String cartShareNotiCntt) {
+        return CartShareNoti.builder()
+                .mbrId(mbrId)
+                .notiCd(notiCd)
+                .cartShareNotiCntt(cartShareNotiCntt)
+                .readYn(false)
+                .build();
+    }
 }
