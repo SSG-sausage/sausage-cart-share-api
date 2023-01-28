@@ -9,12 +9,16 @@ import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindListRespo
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareMbrIdListResponse;
+import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareNotiCntResponse;
+import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareNotiFindListResponse;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShare;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareItem;
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareMbr;
+import com.ssg.sausagecartshareapi.cartshare.entity.CartShareNoti;
 import com.ssg.sausagecartshareapi.cartshare.entity.ProgStatCd;
 import com.ssg.sausagecartshareapi.cartshare.repository.CartShareItemRepository;
 import com.ssg.sausagecartshareapi.cartshare.repository.CartShareMbrRepository;
+import com.ssg.sausagecartshareapi.cartshare.repository.CartShareNotiRepository;
 import com.ssg.sausagecartshareapi.cartshare.repository.CartShareRepository;
 import com.ssg.sausagecartshareapi.common.client.internal.ItemApiClient;
 import com.ssg.sausagecartshareapi.common.client.internal.MbrApiClient;
@@ -43,6 +47,7 @@ public class CartShareService {
     private final CartShareRepository cartShareRepository;
     private final CartShareMbrRepository cartShareMbrRepository;
     private final CartShareItemRepository cartShareItemRepository;
+    private final CartShareNotiRepository cartShareNotiRepository;
     private final CartShareUtilService cartShareUtilService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
@@ -145,6 +150,22 @@ public class CartShareService {
         cartShareMbr.updateProgStatCd(request.getProgStatCd());
         simpMessagingTemplate.convertAndSend(
                 "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+    }
+
+    @Transactional
+    public CartShareNotiFindListResponse findCartShareNotiList(Long mbrId) {
+        List<CartShareNoti> cartShareNotiList = cartShareNotiRepository.findAllByMbrId(mbrId);
+        CartShareNotiFindListResponse response = CartShareNotiFindListResponse.of(cartShareNotiList);
+        cartShareNotiList.stream()
+                .filter(cartShareNoti -> !cartShareNoti.getReadYn())
+                .forEach(CartShareNoti::updateReadYn);
+        return response;
+    }
+
+    @Transactional
+    public CartShareNotiCntResponse findCartShareNotiCnt(Long mbrId) {
+        List<CartShareNoti> readNCartShareNotiList = cartShareNotiRepository.findReadNCartShareNotiListByMbrId(mbrId);
+        return CartShareNotiCntResponse.of(readNCartShareNotiList.size());
     }
 
     public CartShareItemListResponse findCartShareItemList(Long cartShareId) {

@@ -3,6 +3,8 @@ package com.ssg.sausagecartshareapi.cartshare.entity;
 import com.ssg.sausagecartshareapi.common.entity.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,9 +33,26 @@ public class CartShareNoti extends BaseEntity {
     @Column(name = "MBR_ID")
     private Long mbrId;
 
+    @Column(name = "NOTI_CD")
+    @Enumerated(EnumType.STRING)
+    private NotiCd notiCd;
+
     @Column(name = "CART_SHARE_NOTI_CNTT")
     private String cartShareNotiCntt;
 
     @Column(name = "READ_YN")
     private Boolean readYn;
+
+    public static CartShareNoti newInstance(Long mbrId, NotiCd notiCd, String cartShareNotiCntt) {
+        return CartShareNoti.builder()
+                .mbrId(mbrId)
+                .notiCd(notiCd)
+                .cartShareNotiCntt(cartShareNotiCntt)
+                .readYn(false)
+                .build();
+    }
+
+    public void updateReadYn() {
+        this.readYn = true;
+    }
 }
