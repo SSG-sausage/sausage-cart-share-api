@@ -25,12 +25,16 @@ public class CartShareMbrIdListResponse {
     @Schema(description = "멤버 ID 리스트")
     private List<Long> mbrIdList;
 
+    @Schema(description = "공유장바구니 이름")
+    private String cartShareNm;
+
     public static CartShareMbrIdListResponse of(CartShare cartShare, List<CartShareMbr> cartShareMbrList) {
         return CartShareMbrIdListResponse.builder()
                 .mastrMbrId(cartShare.getMastrMbrId())
                 .mbrIdList(cartShareMbrList.stream()
                         .map(CartShareMbr::getMbrId)
                         .collect(Collectors.toList()))
+                .cartShareNm(cartShare.getCartShareNm())
                 .build();
     }
 }
