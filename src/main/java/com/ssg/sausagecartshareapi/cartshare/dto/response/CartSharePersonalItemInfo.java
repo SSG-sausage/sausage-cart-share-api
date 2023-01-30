@@ -44,11 +44,8 @@ public class CartSharePersonalItemInfo {
     public static CartSharePersonalItemInfo of(Long myId, CartShareMbr cartShareMbr, Long mastrId,
             List<CartShareItem> cartShareItemList,
             Map<Long, MbrInfo> mbrInfoMap, Map<Long, ItemInfo> itemInfoMap) {
-        List<CartShareItemInfo> cartShareItemInfoList = cartShareItemList.stream().filter(cartShareItem ->
-                        !cartShareItem.getCommYn() && cartShareItem.getMbrId().equals(cartShareMbr.getMbrId()))
-                .map(cartShareItem -> CartShareItemInfo.of(
-                        cartShareItem, itemInfoMap.get(cartShareItem.getItemId())))
-                .collect(Collectors.toList());
+        List<CartShareItemInfo> cartShareItemInfoList = toNotCommPersonalCartShareItemInfoList(cartShareItemList,
+                cartShareMbr, itemInfoMap);
         return CartSharePersonalItemInfo.builder()
                 .mbrNm(mbrInfoMap.get(cartShareMbr.getMbrId()).getMbrNm())
                 .mastrYn(cartShareMbr.getMbrId().equals(mastrId))
@@ -57,6 +54,15 @@ public class CartSharePersonalItemInfo {
                 .personalAmt(calculatePersonalAmt(cartShareItemInfoList))
                 .cartShareItemList(cartShareItemInfoList)
                 .build();
+    }
+
+    private static List<CartShareItemInfo> toNotCommPersonalCartShareItemInfoList(List<CartShareItem> cartShareItemList,
+            CartShareMbr cartShareMbr, Map<Long, ItemInfo> itemInfoMap) {
+        return cartShareItemList.stream().filter(cartShareItem ->
+                        !cartShareItem.getCommYn() && cartShareItem.getMbrId().equals(cartShareMbr.getMbrId()))
+                .map(cartShareItem -> CartShareItemInfo.of(
+                        cartShareItem, itemInfoMap.get(cartShareItem.getItemId())))
+                .collect(Collectors.toList());
     }
 
     private static int calculatePersonalAmt(List<CartShareItemInfo> cartShareItemInfoList) {

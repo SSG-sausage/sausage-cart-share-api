@@ -60,26 +60,38 @@ public class CartShareAmtInfo {
     private int itemQty;
 
     public static CartShareAmtInfo of(List<CartShareItem> cartShareItemList, Map<Long, ItemInfo> itemInfoMap) {
-        List<CartShareItem> ssgCartShareItemList = cartShareItemList.stream()
-                .filter(cartShareItem -> itemInfoMap.get(cartShareItem.getItemId())
-                        .getShppCd().equals("SSG_SHPP"))
-                .collect(Collectors.toList());
-        List<CartShareItem> tradersCartShareItemList = cartShareItemList.stream()
-                .filter(cartShareItem -> itemInfoMap.get(cartShareItem.getItemId())
-                        .getShppCd().equals("SSG_TRADERS_SHPP"))
-                .collect(Collectors.toList());
-        int ssgOrdAmt = ssgCartShareItemList.stream().mapToInt(ssgCartShareItem ->
-                        ssgCartShareItem.getItemQty() * itemInfoMap.get(ssgCartShareItem.getItemId()).getItemAmt())
+        List<CartShareItem> ssgCartShareItemList = filterByShppCd("SSG_SHPP", cartShareItemList, itemInfoMap);
+        List<CartShareItem> tradersCartShareItemList = filterByShppCd("SSG_TRADERS_SHPP", cartShareItemList,
+                itemInfoMap);
+
+        // 쓱배송 상품 주문금액
+        int ssgOrdAmt = ssgCartShareItemList.stream()
+                .mapToInt(item -> item.getItemQty() * itemInfoMap.get(item.getItemId()).getItemAmt())
                 .sum();
+
+        // 쓱배송 상품 배송비
         int ssgShppAmt = ssgOrdAmt >= 40000 ? 0 : 3000;
+
+        // 쓱배송 무료배송까지 남은 금액
         int ssgFreeShppRemainAmt = ssgOrdAmt >= 40000 ? 0 : 40000 - ssgOrdAmt;
-        int tradersOrdAmt = tradersCartShareItemList.stream().mapToInt(tradersCartShareItem ->
-                        tradersCartShareItem.getItemQty() * itemInfoMap.get(tradersCartShareItem.getItemId()).getItemAmt())
+
+        // 트레이더스 상품 주문금액
+        int tradersOrdAmt = tradersCartShareItemList.stream()
+                .mapToInt(item -> item.getItemQty() * itemInfoMap.get(item.getItemId()).getItemAmt())
                 .sum();
+
+        // 트레이더스 상품 배송비
         int tradersShppAmt = tradersOrdAmt >= 120000 ? 0 : 4000;
+
+        // 트레이더스 무료배송까지 남은 금액
         int tradersFreeShppRemainAmt = tradersOrdAmt >= 120000 ? 0 : 120000 - tradersOrdAmt;
+
+        // 주문 금액
         int ordAmt = ssgOrdAmt + tradersOrdAmt;
+
+        // 배송비
         int shppAmt = ssgShppAmt + tradersShppAmt;
+
         return CartShareAmtInfo.builder()
                 .ssgOrdAmt(ssgOrdAmt)
                 .ssgShppAmt(ssgShppAmt)
@@ -93,7 +105,19 @@ public class CartShareAmtInfo {
                 .discountAmt(0)
                 .shppAmt(shppAmt)
                 .totalAmt(ordAmt + shppAmt)
-                .itemQty(cartShareItemList.stream().map(CartShareItem::getItemId).collect(Collectors.toSet()).size())
+                .itemQty(countUniqueItemQty(cartShareItemList))
                 .build();
+    }
+
+    private static List<CartShareItem> filterByShppCd(String shppCd, List<CartShareItem> cartShareItemList,
+            Map<Long, ItemInfo> itemInfoMap) {
+        return cartShareItemList.stream()
+                .filter(cartShareItem -> itemInfoMap.get(cartShareItem.getItemId())
+                        .getShppCd().equals(shppCd))
+                .collect(Collectors.toList());
+    }
+
+    private static int countUniqueItemQty(List<CartShareItem> cartShareItemList) {
+        return cartShareItemList.stream().map(CartShareItem::getItemId).collect(Collectors.toSet()).size();
     }
 }
