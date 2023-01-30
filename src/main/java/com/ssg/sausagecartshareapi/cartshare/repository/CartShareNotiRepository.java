@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CartShareNotiRepository extends JpaRepository<CartShareNoti, Long>, CartShareNotiRepositoryCustom {
 
-    List<CartShareNoti> findAllByMbrId(Long mbrId);
+    List<CartShareNoti> findAllByMbrIdOrderByRegDtsDesc(Long mbrId);
 }
