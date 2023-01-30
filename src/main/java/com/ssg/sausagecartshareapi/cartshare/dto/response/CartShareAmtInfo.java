@@ -66,7 +66,7 @@ public class CartShareAmtInfo {
                 .collect(Collectors.toList());
         List<CartShareItem> tradersCartShareItemList = cartShareItemList.stream()
                 .filter(cartShareItem -> itemInfoMap.get(cartShareItem.getItemId())
-                        .getShppCd().equals("EMART_TRADERS_SHPP"))
+                        .getShppCd().equals("SSG_TRADERS_SHPP"))
                 .collect(Collectors.toList());
         int ssgOrdAmt = ssgCartShareItemList.stream().mapToInt(ssgCartShareItem ->
                         ssgCartShareItem.getItemQty() * itemInfoMap.get(ssgCartShareItem.getItemId()).getItemAmt())
