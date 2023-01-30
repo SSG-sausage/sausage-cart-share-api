@@ -74,14 +74,9 @@ public class CartShareFindResponse {
                 .cartShareMbrId(cartShareMbr.getCartShareMbrId())
                 .mastrYn(myId.equals(cartShare.getMastrMbrId()))
                 .cartShareNm(cartShare.getCartShareNm())
-                .cartShareItemQty(
-                        cartShareItemList.stream().map(CartShareItem::getItemId).collect(Collectors.toSet()).size())
+                .cartShareItemQty(countUniqueItemQty(cartShareItemList))
                 .cartShareMbrCnt(cartShareMbrList.size())
-                .cartShareChoosingMbrCnt(
-                        (int) cartShareMbrList.stream()
-                                .filter(mbr -> !mbr.getMbrId().equals(cartShare.getMastrMbrId())
-                                        && mbr.getProgStatCd().equals(ProgStatCd.IN_PROGRESS))
-                                .count())
+                .cartShareChoosingMbrCnt(countInProgressMbr(cartShare.getMastrMbrId(), cartShareMbrList))
                 .mastrNm(mbrInfoMap.get(cartShare.getMastrMbrId()).getMbrNm())
                 .cartShareAddr(cartShare.getCartShareAddr())
                 .commonItemInfo(CartShareCommonItemInfo.of(cartShareItemList, itemInfoMap))
@@ -93,5 +88,16 @@ public class CartShareFindResponse {
                 .progStatCd(cartShareMbr.getProgStatCd())
                 .editPsblYn(cartShare.getEditPsblYn())
                 .build();
+    }
+
+    private static int countInProgressMbr(Long mastrMbrId, List<CartShareMbr> cartShareMbrList) {
+        return (int) cartShareMbrList.stream()
+                .filter(mbr -> !mbr.getMbrId().equals(mastrMbrId)
+                        && mbr.getProgStatCd().equals(ProgStatCd.IN_PROGRESS))
+                .count();
+    }
+
+    private static int countUniqueItemQty(List<CartShareItem> cartShareItemList) {
+        return cartShareItemList.stream().map(CartShareItem::getItemId).collect(Collectors.toSet()).size();
     }
 }

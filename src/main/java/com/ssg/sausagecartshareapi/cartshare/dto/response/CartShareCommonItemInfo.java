@@ -27,15 +27,20 @@ public class CartShareCommonItemInfo {
     private List<CartShareItemInfo> cartShareItemList;
 
     public static CartShareCommonItemInfo of(List<CartShareItem> cartShareItemList, Map<Long, ItemInfo> itemInfoMap) {
-        List<CartShareItemInfo> cartShareItemInfoList = cartShareItemList.stream()
-                .filter(CartShareItem::getCommYn)
-                .map(cartShareItem -> CartShareItemInfo.of(
-                        cartShareItem, itemInfoMap.get(cartShareItem.getItemId())))
-                .collect(Collectors.toList());
+        List<CartShareItemInfo> cartShareItemInfoList = toCommCartShareItemInfoList(cartShareItemList, itemInfoMap);
         return CartShareCommonItemInfo.builder()
                 .commonAmt(calculateCommonAmt(cartShareItemInfoList))
                 .cartShareItemList(cartShareItemInfoList)
                 .build();
+    }
+
+    private static List<CartShareItemInfo> toCommCartShareItemInfoList(List<CartShareItem> cartShareItemList,
+            Map<Long, ItemInfo> itemInfoMap) {
+        return cartShareItemList.stream()
+                .filter(CartShareItem::getCommYn)
+                .map(cartShareItem -> CartShareItemInfo.of(
+                        cartShareItem, itemInfoMap.get(cartShareItem.getItemId())))
+                .collect(Collectors.toList());
     }
 
     private static int calculateCommonAmt(List<CartShareItemInfo> cartShareItemInfoList) {
