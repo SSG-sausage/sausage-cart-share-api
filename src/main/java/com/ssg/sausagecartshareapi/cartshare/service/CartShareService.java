@@ -154,7 +154,7 @@ public class CartShareService {
 
     @Transactional
     public CartShareNotiFindListResponse findCartShareNotiList(Long mbrId) {
-        List<CartShareNoti> cartShareNotiList = cartShareNotiRepository.findAllByMbrId(mbrId);
+        List<CartShareNoti> cartShareNotiList = cartShareNotiRepository.findAllByMbrIdOrderByRegDtsDesc(mbrId);
         CartShareNotiFindListResponse response = CartShareNotiFindListResponse.of(cartShareNotiList);
         cartShareNotiList.stream()
                 .filter(cartShareNoti -> !cartShareNoti.getReadYn())

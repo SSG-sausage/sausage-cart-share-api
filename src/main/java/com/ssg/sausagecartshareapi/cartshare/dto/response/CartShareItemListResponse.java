@@ -54,6 +54,12 @@ public class CartShareItemListResponse {
         @Schema(description = "공통상품여부")
         private boolean commYn;
 
+        @Schema(description = "상품브랜드이름")
+        private String itemBrandNm;
+
+        @Schema(description = "상품이미지 URL")
+        private String itemImgUrl;
+
         private static CartShareItemInfo of(CartShareItem cartShareItem, ItemInfo itemInfo) {
             return CartShareItemInfo.builder()
                     .cartShareItemId(cartShareItem.getCartShareItemId())
@@ -64,6 +70,8 @@ public class CartShareItemListResponse {
                     .shppCd(itemInfo.getShppCd())
                     .itemQty(cartShareItem.getItemQty())
                     .commYn(cartShareItem.getCommYn())
+                    .itemBrandNm(itemInfo.getItemBrandNm())
+                    .itemImgUrl(itemInfo.getItemImgUrl())
                     .build();
         }
     }
