@@ -58,8 +58,8 @@ public class ConsumerService {
         try {
             CartShareItemDeleteListDto dto = objectMapper.readValue(message, CartShareItemDeleteListDto.class);
             CartShare cartShare = cartShareUtilService.findCartShareById(dto.getCartShareId());
-            List<CartShareItem> cartShareItemList = cartShareItemRepository.findAllByCartShare(cartShare);
-            List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare);
+            List<CartShareItem> cartShareItemList = cartShare.getCartShareItemList();
+            List<CartShareMbr> cartShareMbrList = cartShare.getCartShareMbrList();
             cartShareMbrList.forEach(cartShareMbr -> cartShareMbr.updateProgStatCd(ProgStatCd.IN_PROGRESS));
             cartShareItemRepository.deleteAllInBatch(cartShareItemList);
             simpMessagingTemplate.convertAndSend(

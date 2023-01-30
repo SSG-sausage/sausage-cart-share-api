@@ -60,10 +60,10 @@ public class CartShareService {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
         validateCartShareMbr(cartShare, mbrId);
         CartShareMbr cartShareMbr = cartShareUtilService.findCartShareMbrByCartShareAndMbrId(cartShare, mbrId);
-        List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare).stream()
+        List<CartShareMbr> cartShareMbrList = cartShare.getCartShareMbrList().stream()
                 .sorted(Comparator.comparing(CartShareMbr::getRegDts))
                 .collect(Collectors.toList());
-        List<CartShareItem> cartShareItemList = cartShareItemRepository.findAllByCartShare(cartShare);
+        List<CartShareItem> cartShareItemList = cartShare.getCartShareItemList();
         List<Long> mbrIdList = cartShareMbrList.stream()
                 .map(CartShareMbr::getMbrId)
                 .collect(Collectors.toList());
@@ -170,7 +170,7 @@ public class CartShareService {
 
     public CartShareItemListResponse findCartShareItemList(Long cartShareId) {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
-        List<CartShareItem> cartShareItemList = cartShareItemRepository.findAllByCartShare(cartShare);
+        List<CartShareItem> cartShareItemList = cartShare.getCartShareItemList();
         List<Long> itemIdList = cartShareItemList.stream()
                 .map(CartShareItem::getItemId)
                 .distinct()
@@ -181,8 +181,7 @@ public class CartShareService {
 
     public CartShareMbrIdListResponse findCartShareMbrIdList(Long cartShareId) {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
-        List<CartShareMbr> cartShareMbrList = cartShareMbrRepository.findAllByCartShare(cartShare);
-        return CartShareMbrIdListResponse.of(cartShare, cartShareMbrList);
+        return CartShareMbrIdListResponse.of(cartShare, cartShare.getCartShareMbrList());
     }
 
     public boolean validateCartShareMbr(Long cartShareId, Long mbrId) {

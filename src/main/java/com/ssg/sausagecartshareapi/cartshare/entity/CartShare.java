@@ -1,11 +1,13 @@
 package com.ssg.sausagecartshareapi.cartshare.entity;
 
 import com.ssg.sausagecartshareapi.common.entity.BaseEntity;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -39,6 +41,12 @@ public class CartShare extends BaseEntity {
 
     @Column(name = "CART_SHARE_ADDR")
     private String cartShareAddr;
+
+    @OneToMany(mappedBy = "cartShare")
+    private List<CartShareMbr> cartShareMbrList;
+
+    @OneToMany(mappedBy = "cartShare")
+    private List<CartShareItem> cartShareItemList;
 
     public static CartShare newInstance() {
         return CartShare.builder()
