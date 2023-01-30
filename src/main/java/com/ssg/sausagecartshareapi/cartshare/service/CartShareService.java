@@ -1,6 +1,5 @@
 package com.ssg.sausagecartshareapi.cartshare.service;
 
-import com.ssg.sausagecartshareapi.cartshare.dto.CartShareUpdateDto;
 import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareItemCommUpdateRequest;
 import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareItemQtyUpdateRequest;
 import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareItemSaveRequest;
@@ -27,13 +26,13 @@ import com.ssg.sausagecartshareapi.common.client.internal.dto.response.MbrListIn
 import com.ssg.sausagecartshareapi.common.exception.ErrorCode;
 import com.ssg.sausagecartshareapi.common.exception.ForbiddenException;
 import com.ssg.sausagecartshareapi.common.exception.ValidationException;
+import com.ssg.sausagecartshareapi.common.websocket.WebSocketService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +48,7 @@ public class CartShareService {
     private final CartShareItemRepository cartShareItemRepository;
     private final CartShareNotiRepository cartShareNotiRepository;
     private final CartShareUtilService cartShareUtilService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final WebSocketService webSocketService;
 
     public CartShareFindListResponse findCartShareList(Long mbrId) {
         List<CartShare> cartShareList = cartShareRepository.findCartShareListByMbrId(mbrId);
@@ -91,8 +90,7 @@ public class CartShareService {
             cartShareItemRepository.save(
                     CartShareItem.newInstance(mbrId, request.getItemId(), cartShare, request.getItemQty()));
         }
-        simpMessagingTemplate.convertAndSend(
-                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+        webSocketService.sendCartShareUpdateMessage(cartShareId, mbrId);
     }
 
     @Transactional
@@ -104,8 +102,7 @@ public class CartShareService {
         validateCartShareMbrProg(cartShareMbr);
         validateCartShareItem(cartShareItem, cartShare, mbrId);
         cartShareItemRepository.delete(cartShareItem);
-        simpMessagingTemplate.convertAndSend(
-                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+        webSocketService.sendCartShareUpdateMessage(cartShareId, mbrId);
     }
 
     @Transactional
@@ -119,8 +116,7 @@ public class CartShareService {
         validateCartShareItem(cartShareItem, cartShare, mbrId);
         validateCartShareItemQty(cartShareItem, request.getQty());
         cartShareItem.addItemQty(request.getQty());
-        simpMessagingTemplate.convertAndSend(
-                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+        webSocketService.sendCartShareUpdateMessage(cartShareId, mbrId);
     }
 
     @Transactional
@@ -135,8 +131,7 @@ public class CartShareService {
         validateCartShareItem(cartShareItem, cartShare, mbrId);
         validateCartShareItemComm(cartShareItem, request.isCommYn());
         cartShareItem.updateCommYn(request.isCommYn());
-        simpMessagingTemplate.convertAndSend(
-                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+        webSocketService.sendCartShareUpdateMessage(cartShareId, mbrId);
     }
 
     @Transactional
@@ -148,8 +143,7 @@ public class CartShareService {
         validateCartShareMbr(cartShare, mbrId);
         validateCartShareMbrProg(cartShareMbr, request.getProgStatCd());
         cartShareMbr.updateProgStatCd(request.getProgStatCd());
-        simpMessagingTemplate.convertAndSend(
-                "/sub/cart-share/" + cartShareId, CartShareUpdateDto.of(cartShareId, mbrId, "update"));
+        webSocketService.sendCartShareUpdateMessage(cartShareId, mbrId);
     }
 
     @Transactional
