@@ -7,6 +7,7 @@ import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareMbrProgUpdateR
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemListResponse;
+import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemSaveResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareMbrIdListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareNotiCntResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareNotiFindListResponse;
@@ -68,19 +69,19 @@ public class CartShareController {
     }
 
     @Operation(summary = "[external] 장바구니에 상품 추가", responses = {
-            @ApiResponse(responseCode = "200", description = "성공입니다."),
+            @ApiResponse(responseCode = "200", description = "장바구니 상품 추가 성공입니다."),
             @ApiResponse(responseCode = "400", description = "1. itemId를 입력해주세요. (itemId)\n2. itemQty를 입력해주세요. (itemQty)\n3. 공유장바구니멤버 진행 상태가 담기중 인 경우에만 수정 할 수 있습니다.\n4. 공유장바구니의 수정 가능 여부가 false 인 경우에만 수정 할 수 있습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "403", description = "해당 장바구니에 접근 권한이 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 공유장바구니입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "예상치 못한 서버 에러가 발생하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @PostMapping("/cart-share/{cartShareId}/cart-share-item")
-    public ResponseEntity<SuccessResponse<String>> saveCartShareItem(
+    public ResponseEntity<SuccessResponse<CartShareItemSaveResponse>> saveCartShareItem(
             @PathVariable Long cartShareId,
             @Parameter(in = ParameterIn.HEADER) @MbrId Long mbrId,
             @Valid @RequestBody CartShareItemSaveRequest request) {
-        cartShareService.saveCartShareItem(cartShareId, mbrId, request);
-        return SuccessResponse.OK;
+        return SuccessResponse.success(SuccessCode.SAVE_CART_SHARE_ITEM_SUCCESS,
+                cartShareService.saveCartShareItem(cartShareId, mbrId, request));
     }
 
     @Operation(summary = "[external] 장바구니의 상품 삭제", responses = {

@@ -7,6 +7,7 @@ import com.ssg.sausagecartshareapi.cartshare.dto.request.CartShareMbrProgUpdateR
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareFindResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemListResponse;
+import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareItemSaveResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareMbrIdListResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareNotiCntResponse;
 import com.ssg.sausagecartshareapi.cartshare.dto.response.CartShareNotiFindListResponse;
@@ -77,20 +78,27 @@ public class CartShareService {
     }
 
     @Transactional
-    public void saveCartShareItem(Long cartShareId, Long mbrId, CartShareItemSaveRequest request) {
+    public CartShareItemSaveResponse saveCartShareItem(Long cartShareId, Long mbrId, CartShareItemSaveRequest request) {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
         CartShareMbr cartShareMbr = findCartShareMbrByCartShareAndMbrId(cartShare, mbrId);
         validateCartShareEdit(cartShare);
         validateCartShareMbrProg(cartShareMbr);
+        boolean newItemYn;
+        int itemQty;
         Optional<CartShareItem> cartShareItem = cartShareItemRepository.findByCartShareAndMbrIdAndItemId(
                 cartShare, mbrId, request.getItemId());
         if (cartShareItem.isPresent()) {
             cartShareItem.get().addItemQty(request.getItemQty());
+            newItemYn = false;
+            itemQty = cartShareItem.get().getItemQty();
         } else {
             cartShareItemRepository.save(
                     CartShareItem.newInstance(mbrId, request.getItemId(), cartShare, request.getItemQty()));
+            newItemYn = true;
+            itemQty = request.getItemQty();
         }
         webSocketService.sendCartShareUpdateMessage(cartShareId, mbrId);
+        return CartShareItemSaveResponse.of(newItemYn, itemQty);
     }
 
     @Transactional
