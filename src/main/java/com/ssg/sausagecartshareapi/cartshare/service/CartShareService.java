@@ -164,13 +164,18 @@ public class CartShareService {
 
     public CartShareItemListResponse findCartShareItemList(Long cartShareId) {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
+        List<CartShareMbr> cartShareMbrList = cartShare.getCartShareMbrList();
         List<CartShareItem> cartShareItemList = cartShare.getCartShareItemList();
+        List<Long> mbrIdList = cartShareMbrList.stream()
+                .map(CartShareMbr::getMbrId)
+                .collect(Collectors.toList());
         List<Long> itemIdList = cartShareItemList.stream()
                 .map(CartShareItem::getItemId)
                 .distinct()
                 .collect(Collectors.toList());
+        Map<Long, MbrInfo> mbrInfoMap = mbrApiClient.getMbrListInfo(mbrIdList).getData().getMbrMap();
         Map<Long, ItemInfo> itemInfoMap = itemApiClient.getItemListInfo(itemIdList).getData().getItemMap();
-        return CartShareItemListResponse.of(cartShareItemList, itemInfoMap);
+        return CartShareItemListResponse.of(cartShareItemList, mbrInfoMap, itemInfoMap);
     }
 
     public CartShareMbrIdListResponse findCartShareMbrIdList(Long cartShareId) {
