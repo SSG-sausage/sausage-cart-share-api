@@ -2,6 +2,7 @@ package com.ssg.sausagecartshareapi.cartshare.dto.response;
 
 import com.ssg.sausagecartshareapi.cartshare.entity.CartShareItem;
 import com.ssg.sausagecartshareapi.common.client.internal.dto.response.ItemListInfoResponse.ItemInfo;
+import com.ssg.sausagecartshareapi.common.client.internal.dto.response.MbrListInfoResponse.MbrInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,9 @@ public class CartShareItemListResponse {
         @Schema(description = "멤버 ID")
         private Long mbrId;
 
+        @Schema(description = "멤버 이름")
+        private String mbrNm;
+
         @Schema(description = "상품이름")
         private String itemNm;
 
@@ -60,11 +64,12 @@ public class CartShareItemListResponse {
         @Schema(description = "상품이미지 URL")
         private String itemImgUrl;
 
-        private static CartShareItemInfo of(CartShareItem cartShareItem, ItemInfo itemInfo) {
+        private static CartShareItemInfo of(CartShareItem cartShareItem, MbrInfo mbrInfo, ItemInfo itemInfo) {
             return CartShareItemInfo.builder()
                     .cartShareItemId(cartShareItem.getCartShareItemId())
                     .itemId(cartShareItem.getItemId())
                     .mbrId(cartShareItem.getMbrId())
+                    .mbrNm(mbrInfo.getMbrNm())
                     .itemNm(itemInfo.getItemNm())
                     .itemAmt(itemInfo.getItemAmt())
                     .shppCd(itemInfo.getShppCd())
@@ -76,10 +81,12 @@ public class CartShareItemListResponse {
         }
     }
 
-    public static CartShareItemListResponse of(List<CartShareItem> cartShareItemList, Map<Long, ItemInfo> itemInfoMap) {
+    public static CartShareItemListResponse of(List<CartShareItem> cartShareItemList,
+            Map<Long, MbrInfo> mbrInfoMap, Map<Long, ItemInfo> itemInfoMap) {
         return CartShareItemListResponse.builder()
                 .cartShareItemList(cartShareItemList.stream()
-                        .map(item -> CartShareItemInfo.of(item, itemInfoMap.get(item.getItemId())))
+                        .map(item -> CartShareItemInfo.of(
+                                item, mbrInfoMap.get(item.getMbrId()), itemInfoMap.get(item.getItemId())))
                         .collect(Collectors.toList()))
                 .build();
     }
