@@ -188,7 +188,9 @@ public class CartShareService {
 
     public CartShareMbrIdListResponse findCartShareMbrIdList(Long cartShareId) {
         CartShare cartShare = cartShareUtilService.findCartShareById(cartShareId);
-        return CartShareMbrIdListResponse.of(cartShare, cartShare.getCartShareMbrList());
+        List<Long> mbrIdList = List.of(cartShare.getMastrMbrId());
+        Map<Long, MbrInfo> mbrInfoMap = mbrApiClient.getMbrListInfo(mbrIdList).getData().getMbrMap();
+        return CartShareMbrIdListResponse.of(cartShare, cartShare.getCartShareMbrList(), mbrInfoMap);
     }
 
     public boolean validateCartShareMbr(Long cartShareId, Long mbrId) {
