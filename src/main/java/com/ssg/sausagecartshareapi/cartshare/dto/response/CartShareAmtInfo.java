@@ -70,7 +70,7 @@ public class CartShareAmtInfo {
                 .sum();
 
         // 쓱배송 상품 배송비
-        int ssgShppAmt = ssgOrdAmt >= 40000 ? 0 : 3000;
+        int ssgShppAmt = ssgOrdAmt >= 40000 || ssgOrdAmt == 0 ? 0 : 3000;
 
         // 쓱배송 무료배송까지 남은 금액
         int ssgFreeShppRemainAmt = ssgOrdAmt >= 40000 ? 0 : 40000 - ssgOrdAmt;
@@ -81,7 +81,7 @@ public class CartShareAmtInfo {
                 .sum();
 
         // 트레이더스 상품 배송비
-        int tradersShppAmt = tradersOrdAmt >= 120000 ? 0 : 4000;
+        int tradersShppAmt = tradersOrdAmt >= 120000 || tradersOrdAmt == 0 ? 0 : 4000;
 
         // 트레이더스 무료배송까지 남은 금액
         int tradersFreeShppRemainAmt = tradersOrdAmt >= 120000 ? 0 : 120000 - tradersOrdAmt;
